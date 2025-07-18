@@ -32,5 +32,5 @@ Este entorno de configuración está basado en Neovim + Mason + Treesitter, y ut
 Puedes usar el siguiente script para instalar todas las herramientas necesarias y clonar tu configuración de Neovim:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ludwinss/dotfile-neovim/main/bootstrap.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ludwinss/dotfile-neovim/master/bootstrap.sh)"
 
