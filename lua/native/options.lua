@@ -29,6 +29,8 @@ vim.opt.cmdheight = 0
 vim.g.VM_set_statusline = 0
 vim.g.VM_silent_exit = 1
 
+vim.o.termguicolors = true
+
 if not U.is_default() then
     vim.opt.fillchars = {
         horiz = C.bottom_thin,

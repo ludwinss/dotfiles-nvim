@@ -23,7 +23,14 @@ local function setup(server, opts)
 	lspconfig[server].setup(opts)
 end
 
-setup("omnisharp")
+-- ==================================================================
+local omnisharp_bin = vim.fn.stdpath("data") .. "/mason/bin/OmniSharp"
+
+setup("omnisharp", {
+	cmd = { omnisharp_bin, "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
+})
+
+-- ==================================================================
 
 setup("lua_ls")
 setup("bashls")

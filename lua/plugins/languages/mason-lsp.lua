@@ -22,5 +22,5 @@ mason_lspconfig.setup({
 		"omnisharp",
 		"ruff",
 	},
-	automatic_enable = true,
+	automatic_enable = false
 })
