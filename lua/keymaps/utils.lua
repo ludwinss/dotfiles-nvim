@@ -54,6 +54,13 @@ function M.toggle_oil()
 	end
 end
 
+function M.toggle_completion()
+	local ok, codeium = pcall(require, "codeium")
+	if ok and codeium.toggle then
+		codeium.toggle()
+	end
+end
+
 function M.close_all_oil_windows()
 	for _, win in ipairs(vim.api.nvim_list_wins()) do
 		local buf = vim.api.nvim_win_get_buf(win)

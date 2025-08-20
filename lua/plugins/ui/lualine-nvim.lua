@@ -51,6 +51,14 @@ local function get_format_enabled_color()
 	return icon_hl
 end
 
+local function get_copilot_enabled_color()
+	local enabled = require("native.lsp-native").copilot_enabled
+	if enabled then
+		return { fg = green }
+	end
+	return icon_hl
+end
+
 local function get_recording_color()
 	if U.is_recording() then
 		return { fg = red }
@@ -201,6 +209,13 @@ require("lualine").setup({
 				padding = 1,
 				color = text_hl,
 				icon = { " ", color = icon_hl },
+			},
+			{
+				function()
+					return "󰚩"
+				end,
+				color = get_copilot_enabled_color,
+				padding = 0,
 			},
 			{
 				function()

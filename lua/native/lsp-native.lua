@@ -103,12 +103,27 @@ function M.format_buffer()
 	vim.api.nvim_win_set_cursor(0, cursor_position)
 end
 
-M.format_enabled = false
+M.format_enabled = true
 vim.g.disable_autoformat = not M.format_enabled
 
 function M.toggle_format_enabled()
 	M.format_enabled = not M.format_enabled
 	vim.g.disable_autoformat = not M.format_enabled
+	require("utils").refresh_statusline()
+end
+
+M.copilot_enabled = true
+vim.g.disable_completion = not M.copilot_enabled
+
+function M.toggle_copilot()
+	M.copilot_enabled = not M.copilot_enabled
+	vim.g.disable_completion = not M.copilot_enabled
+
+	local ok, codeium = pcall(require, "codeium")
+	if ok and codeium.toggle then
+		codeium.toggle()
+	end
+
 	require("utils").refresh_statusline()
 end
 
