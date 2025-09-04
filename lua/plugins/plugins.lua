@@ -199,6 +199,13 @@ return {
 			require("plugins.ui.diffview")
 		end,
 	},
+	{
+		"kylechui/nvim-surround",
+		event = "VeryLazy",
+		config = function()
+			require("nvim-surround").setup({})
+		end,
+	},
 	-- THEMES
 	{
 		"AlexvZyl/nordic.nvim",

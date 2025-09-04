@@ -53,11 +53,7 @@ setup("eslint", {
 	),
 	settings = { format = false },
 })
-if lspconfig.ts_ls then
-	setup("ts_ls")
-elseif lspconfig.tsserver then
-	setup("tsserver")
-end
+setup("ts_ls")
 setup("cmake")
 setup("dockerls")
 setup("docker_compose_language_service")

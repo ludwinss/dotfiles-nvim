@@ -13,7 +13,7 @@ mason_lspconfig.setup({
 		"gopls",
 		"terraformls",
 		"eslint",
-		"ts_ls",
+		"tsserver",
 		"cmake",
 		"dockerls",
 		"docker_compose_language_service",
@@ -22,5 +22,5 @@ mason_lspconfig.setup({
 		"omnisharp",
 		"ruff",
 	},
-	automatic_enable = false
+	automatic_enable = false,
 })
