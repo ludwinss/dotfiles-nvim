@@ -6,7 +6,7 @@ mason_lspconfig.setup({
 		"lua_ls",
 		"julials",
 		"bashls",
-		"pyright",
+		"pylsp",
 		"rust_analyzer",
 		"texlab",
 		"yamlls",
@@ -23,4 +23,5 @@ mason_lspconfig.setup({
 		"ruff",
 	},
 	automatic_enable = false,
+	automatic_installation = true,
 })

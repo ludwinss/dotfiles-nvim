@@ -1,4 +1,3 @@
-local lspconfig = require("lspconfig")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 local function on_attach(client, bufnr)
@@ -7,55 +6,67 @@ local function on_attach(client, bufnr)
 	vim.bo[bufnr].formatexpr = ""
 end
 
-local defaults = {
+vim.lsp.config("*", {
 	capabilities = capabilities,
 	on_attach = on_attach,
 	flags = { debounce_text_changes = 250 },
-}
+})
 
-local function setup(server, opts)
-	opts = opts or {}
-	for k, v in pairs(defaults) do
-		if opts[k] == nil then
-			opts[k] = v
-		end
-	end
-	lspconfig[server].setup(opts)
-end
-
--- ==================================================================
 local omnisharp_bin = vim.fn.stdpath("data") .. "/mason/bin/OmniSharp"
-
-setup("omnisharp", {
+vim.lsp.config("omnisharp", {
 	cmd = { omnisharp_bin, "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
 })
 
--- ==================================================================
-
-setup("lua_ls")
-setup("bashls")
-setup("pyright")
-setup("ruff")
-setup("rust_analyzer")
-setup("gopls")
-setup("cssls")
-setup("texlab")
-setup("yamlls")
-setup("terraformls")
-setup("eslint", {
-	root_dir = require("lspconfig.util").root_pattern(
+vim.lsp.config("eslint", {
+	root_markers = {
 		".eslintrc",
 		".eslintrc.js",
 		".eslintrc.cjs",
 		".eslintrc.json",
 		"package.json",
-		".git"
-	),
+		".git",
+	},
 	settings = { format = false },
 })
-setup("ts_ls")
-setup("cmake")
-setup("dockerls")
-setup("docker_compose_language_service")
-setup("html")
-setup("jsonls")
+
+local function project_python()
+	local v = vim.fs.joinpath(vim.fn.getcwd(), ".venv", "bin", "python")
+	if vim.fn.executable(v) == 1 then
+		return v
+	end
+	return nil
+end
+
+vim.lsp.config("pylsp", {
+	settings = {
+		pylsp = {
+			plugins = {
+				jedi = { environment = project_python() },
+				pyflakes = { enabled = true },
+				pycodestyle = { enabled = false },
+				rope = { enabled = true },
+				rope_autoimport = { enabled = true },
+			},
+		},
+	},
+})
+
+vim.lsp.enable({
+	"omnisharp",
+	"lua_ls",
+	"bashls",
+	"pylsp",
+	"rust_analyzer",
+	"gopls",
+	"cssls",
+	"texlab",
+	"yamlls",
+	"terraformls",
+	"eslint",
+	"ts_ls",
+	"cmake",
+	"dockerls",
+	"docker_compose_language_service",
+	"html",
+	"jsonls",
+})
