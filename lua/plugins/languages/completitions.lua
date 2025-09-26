@@ -1,4 +1,5 @@
 local CMP = require("cmp")
+local codeium = require("codeium")
 local U = require("utils")
 
 require("plugins.ui.nvim-cmp")
@@ -56,12 +57,44 @@ local search_window = {
 		side_padding = 0,
 	}),
 }
+
+local mapping = CMP.mapping.preset.insert({
+	["<C-j>"] = CMP.mapping.select_next_item({ behavior = CMP.SelectBehavior.Select }),
+	["<C-k>"] = CMP.mapping.select_prev_item({ behavior = CMP.SelectBehavior.Select }),
+	["<C-e>"] = CMP.mapping.abort(),
+
+	["<CR>"] = function(fallback)
+		if CMP.visible() then
+			CMP.confirm({ select = false })
+		else
+			local ok = pcall(codeium.accept)
+			if not ok then
+				fallback()
+			end
+		end
+	end,
+
+	["<C-l>"] = function()
+		pcall(codeium.accept_word)
+	end,
+	["<C-;>"] = function()
+		pcall(codeium.accept_line)
+	end,
+})
+
 local search = {
 	window = search_window,
-	mapping = CMP.mapping.preset.cmdline(),
+	mapping = mapping,
 	sources = CMP.config.sources({ { name = "buffer" } }),
 	completion = {
 		autocomplete = false,
 	},
 }
 CMP.setup.cmdline({ "/", "?" }, search)
+
+vim.api.nvim_create_autocmd("User", {
+	pattern = "CmpMenuOpened",
+	callback = function()
+		pcall(require("codeium").clear)
+	end,
+})
