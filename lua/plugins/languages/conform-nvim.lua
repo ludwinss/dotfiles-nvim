@@ -31,6 +31,8 @@ require("conform").setup({
 
 		csharp = { "csharpier" },
 		cs = { "csharpier" },
+		toml = { "taplo" },
+		sql = { "sql_formatter" },
 	},
 
 	formatters = {

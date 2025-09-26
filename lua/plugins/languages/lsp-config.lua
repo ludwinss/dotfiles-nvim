@@ -51,6 +51,20 @@ vim.lsp.config("pylsp", {
 	},
 })
 
+vim.lsp.config("ltex", {
+	cmd_env = {
+		JAVA_TOOL_OPTIONS = "-Djdk.xml.totalEntitySizeLimit=0 --enable-native-access=ALL-UNNAMED",
+	},
+	filetypes = { "markdown", "tex", "plaintex", "text" },
+	settings = {
+		ltex = {
+			language = "es",
+			additionalRules = { enablePickyRules = true, motherTongue = "es" },
+			dictionary = { ["es"] = {} },
+		},
+	},
+})
+
 vim.lsp.enable({
 	"omnisharp",
 	"lua_ls",
@@ -69,4 +83,8 @@ vim.lsp.enable({
 	"docker_compose_language_service",
 	"html",
 	"jsonls",
+	"taplo",
+	"marksman",
+	"ltex",
+	"sqls",
 })
