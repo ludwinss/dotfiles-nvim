@@ -6,64 +6,50 @@ local function fmt_mode(s)
 		["V-BLOCK"] = "V-BLCK",
 		["TERMINAL"] = "TERMNL",
 		["V-REPLACE"] = "V-RPLC",
-		["O-PENDING"] = "0PNDNG",
+		["O-PENDING"] = "OPNDNG",
 	}
 	return mode_map[s] or s
 end
 
-local text_hl
-local icon_hl
-local green
-local red
+local text_hl, icon_hl, green, red
 if U.is_default() then
 	local C = require("native.default-theme").palette
-	red = C.red
-	green = C.green
+	red, green = C.red, C.green
 	icon_hl = { fg = C.gray2 }
 	text_hl = { fg = C.gray2 }
 elseif U.is_nordic() then
 	local C = require("nordic.colors")
 	text_hl = { fg = C.gray3 }
 	icon_hl = { fg = C.gray4 }
-	green = C.green.base
-	red = C.red.base
+	green, red = C.green.base, C.red.base
 elseif U.is_tokyonight() then
 	local C = require("tokyonight.colors.moon")
 	text_hl = { fg = C.fg_gutter }
 	icon_hl = { fg = C.dark3 }
-	green = C.green1
-	red = C.red1
+	green, red = C.green1, C.red1
+else
+	text_hl, icon_hl, green, red = { fg = "#a0a0a0" }, { fg = "#808080" }, "#98c379", "#e86671"
 end
 
+local lsp_native = require("native.lsp-native")
+
 local function get_virtual_text_color()
-	local enabled = require("native.lsp-native").virtual_diagnostics
-	if enabled then
-		return { fg = green }
-	end
-	return icon_hl
+	return lsp_native.virtual_diagnostics and { fg = green } or icon_hl
 end
 
 local function get_format_enabled_color()
-	local enabled = require("native.lsp-native").format_enabled
-	if enabled then
-		return { fg = green }
-	end
-	return icon_hl
+	return lsp_native.format_enabled and { fg = green } or icon_hl
 end
 
 local function get_copilot_enabled_color()
-	local enabled = require("native.lsp-native").copilot_enabled
-	if enabled then
-		return { fg = green }
-	end
-	return icon_hl
+	return lsp_native.copilot_enabled and { fg = green } or icon_hl
 end
 
 local function get_recording_color()
 	if U.is_recording() then
 		return { fg = red }
 	else
-		return { fg = text_hl }
+		return text_hl
 	end
 end
 
@@ -97,21 +83,11 @@ local default_z = {
 local tree = {
 	sections = {
 		lualine_a = {
-			{
-				"mode",
-				fmt = fmt_mode,
-				icon = { "" },
-				separator = { right = " ", left = "" },
-			},
+			{ "mode", fmt = fmt_mode, icon = { "" }, separator = { right = " ", left = "" } },
 		},
 		lualine_b = {},
 		lualine_c = {
-			{
-				U.get_short_cwd,
-				padding = 0,
-				icon = { "   ", color = icon_hl },
-				color = text_hl,
-			},
+			{ U.get_short_cwd, padding = 0, icon = { "   ", color = icon_hl }, color = text_hl },
 		},
 		lualine_x = {},
 		lualine_y = {},
@@ -123,12 +99,7 @@ local tree = {
 local telescope = {
 	sections = {
 		lualine_a = {
-			{
-				"mode",
-				fmt = fmt_mode,
-				icon = { "" },
-				separator = { right = " ", left = "" },
-			},
+			{ "mode", fmt = fmt_mode, icon = { "" }, separator = { right = " ", left = "" } },
 		},
 		lualine_b = {},
 		lualine_c = {
@@ -150,43 +121,19 @@ local telescope = {
 require("lualine").setup({
 	sections = {
 		lualine_a = {
-			{
-				"mode",
-				fmt = fmt_mode,
-				icon = { "" },
-				separator = { right = " ", left = "" },
-			},
+			{ "mode", fmt = fmt_mode, icon = { "" }, separator = { right = " ", left = "" } },
 		},
 		lualine_b = {},
 		lualine_c = {
-			{
-				U.get_recording_state_icon,
-				color = get_recording_color,
-				padding = 0,
-				separator = "",
-			},
-			{
-				"branch",
-				color = text_hl,
-				icon = { " ", color = icon_hl },
-				separator = "",
-				padding = 0,
-			},
+			{ U.get_recording_state_icon, color = get_recording_color, padding = 0, separator = "" },
+			{ "branch", color = text_hl, icon = { " ", color = icon_hl }, separator = "", padding = 0 },
 			{
 				"diff",
 				color = text_hl,
 				icon = { "  ", color = text_hl },
 				source = diff_source,
-				symbols = {
-					added = " ",
-					modified = " ",
-					removed = " ",
-				},
-				diff_color = {
-					added = icon_hl,
-					modified = icon_hl,
-					removed = icon_hl,
-				},
+				symbols = { added = " ", modified = " ", removed = " " },
+				diff_color = { added = icon_hl, modified = icon_hl, removed = icon_hl },
 				padding = 0,
 			},
 		},
@@ -204,12 +151,7 @@ require("lualine").setup({
 				colored = true,
 				padding = 2,
 			},
-			{
-				U.current_buffer_lsp,
-				padding = 1,
-				color = text_hl,
-				icon = { " ", color = icon_hl },
-			},
+			{ U.current_buffer_lsp, padding = 1, color = text_hl, icon = { " ", color = icon_hl } },
 			{
 				function()
 					return "󰚩"
@@ -236,28 +178,22 @@ require("lualine").setup({
 		lualine_z = default_z,
 	},
 	options = {
-		disabled_filetypes = { "dashboard" },
+		disabled_filetypes = { statusline = { "dashboard" } },
 		globalstatus = true,
 		section_separators = { left = " ", right = " " },
 		component_separators = { left = "", right = "" },
 	},
 	extensions = {
 		telescope,
-		["nvim-tree"] = tree,
+		tree,
 	},
 })
 
-vim.api.nvim_create_autocmd({ "BufWinEnter", "WinEnter" }, {
-	callback = function(_)
-		require("lualine").setup({})
+vim.api.nvim_create_autocmd("ColorScheme", {
+	callback = function()
+		require("lualine").refresh()
 	end,
-	pattern = { "*.*" },
-	once = true,
 })
-
-vim.defer_fn(function()
-	require("lualine").setup({})
-end, 1)
 
 if U.is_default() then
 	require("native.default-theme").setup_lualine()

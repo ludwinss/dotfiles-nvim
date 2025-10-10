@@ -33,6 +33,11 @@ require("conform").setup({
 		cs = { "csharpier" },
 		toml = { "taplo" },
 		sql = { "sql_formatter" },
+
+		shell = { "shfmt" },
+		sh = { "shfmt" },
+		bash = { "shfmt" },
+		mksh = { "shfmt" },
 	},
 
 	formatters = {

@@ -4,6 +4,7 @@ require("mason-tool-installer").setup({
 		"stylua",
 		"prettierd",
 		"sql-formatter",
+		"shfmt",
 	},
 	auto_update = true,
 	run_on_start = true,

@@ -86,7 +86,7 @@ function M.editing()
 		require("leap").leap({})
 	end, vim.tbl_extend("force", default_opts, { desc = "Saltar hacia adelante" }))
 
-	keymap(n, "S", function()
+	keymap(n, "gs", function()
 		require("leap").leap({ backward = true })
 	end, vim.tbl_extend("force", default_opts, { desc = "Saltar hacia atrás" }))
 end
