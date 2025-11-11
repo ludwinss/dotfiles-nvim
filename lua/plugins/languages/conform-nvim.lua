@@ -38,6 +38,8 @@ require("conform").setup({
 		sh = { "shfmt" },
 		bash = { "shfmt" },
 		mksh = { "shfmt" },
+
+		dart = { "dart" },
 	},
 
 	formatters = {

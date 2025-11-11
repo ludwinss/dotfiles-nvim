@@ -1,4 +1,5 @@
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local mason = require("plugins.languages.mason-lsp")
 
 local function on_attach(client, bufnr)
 	client.server_capabilities.documentFormattingProvider = false
@@ -31,10 +32,7 @@ vim.lsp.config("eslint", {
 
 local function project_python()
 	local v = vim.fs.joinpath(vim.fn.getcwd(), ".venv", "bin", "python")
-	if vim.fn.executable(v) == 1 then
-		return v
-	end
-	return nil
+	return (vim.fn.executable(v) == 1) and v or nil
 end
 
 vim.lsp.config("pylsp", {
@@ -60,31 +58,29 @@ vim.lsp.config("ltex", {
 		ltex = {
 			language = "es",
 			additionalRules = { enablePickyRules = true, motherTongue = "es" },
-			dictionary = { ["es"] = {} },
+			dictionary = { es = {} },
 		},
 	},
 })
 
-vim.lsp.enable({
-	"omnisharp",
-	"lua_ls",
-	"bashls",
-	"pylsp",
-	"rust_analyzer",
-	"gopls",
-	"cssls",
-	"texlab",
-	"yamlls",
-	"terraformls",
-	"eslint",
-	"ts_ls",
-	"cmake",
-	"dockerls",
-	"docker_compose_language_service",
-	"html",
-	"jsonls",
-	"taplo",
-	"marksman",
-	"ltex",
-	"sqls",
+vim.lsp.config("dart", {
+	cmd = { "dart", "language-server", "--protocol=lsp" },
+	filetypes = { "dart" },
+	init_options = {
+		onlyAnalyzeProjectsWithOpenFiles = true,
+		suggestFromUnimportedLibraries = true,
+		closingLabels = true,
+		outline = true,
+		flutterOutline = true,
+	},
+	settings = { dart = { completeFunctionCalls = true, showTodos = true } },
 })
+
+vim.lsp.config("ts_ls", {
+	settings = {
+		typescript = { format = { enable = false } },
+		javascript = { format = { enable = false } },
+	},
+})
+
+vim.lsp.enable(mason.servers)

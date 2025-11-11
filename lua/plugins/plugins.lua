@@ -28,7 +28,7 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 		lazy = false,
 		config = function()
-			require("plugins.languages.mason-lsp")
+			require("plugins.languages.mason-lsp").setup()
 		end,
 	},
 	{
@@ -295,6 +295,14 @@ return {
 		lazy = false,
 		config = function()
 			require("plugins.ui.toggleterm-nvim")
+		end,
+	},
+	{
+		"iamcco/markdown-preview.nvim",
+		build = "cd app && npm install",
+		ft = { "markdown" },
+		config = function()
+			require("plugins.ui.preview-markdown-nvim")
 		end,
 	},
 }

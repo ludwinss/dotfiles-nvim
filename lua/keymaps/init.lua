@@ -89,6 +89,7 @@ function M.editing()
 	keymap(n, "gs", function()
 		require("leap").leap({ backward = true })
 	end, vim.tbl_extend("force", default_opts, { desc = "Saltar hacia atrás" }))
+	keymap(n, "<leader>m", "<cmd>MarkdownPreviewToggle<CR>", { desc = "Previsualizar markdown" })
 end
 
 --TODO: dont touch
