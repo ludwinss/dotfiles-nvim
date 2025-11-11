@@ -24,7 +24,7 @@ require("conform").setup({
 		javascriptreact = { "prettierd", "eslint_d" },
 		typescriptreact = { "prettierd", "eslint_d" },
 
-		python = { "ruff_fix", "black" },
+		python = { "ruff_format", "ruff_fix" },
 
 		json = { "prettierd" },
 		markdown = { "prettierd" },
