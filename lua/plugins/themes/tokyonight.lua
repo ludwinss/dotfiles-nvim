@@ -75,7 +75,3 @@ require("tokyonight").load({
 	on_colors = function(_) end,
 	transparent = transparent,
 })
-
-require("lualine").setup({
-	options = { theme = "tokyonight-night" },
-})

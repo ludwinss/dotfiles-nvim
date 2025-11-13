@@ -124,7 +124,11 @@ function M.is_nordic()
 end
 
 function M.is_tokyonight()
-	return vim.g.colors_name == "tokyonight"
+	local name = vim.g.colors_name
+	if type(name) ~= "string" then
+		return false
+	end
+	return name == "tokyonight" or vim.startswith(name, "tokyonight-")
 end
 
 function M.is_default()

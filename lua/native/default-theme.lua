@@ -166,7 +166,7 @@ function M.init()
   })
 end
 
-function M.setup_lualine()
+local function default_lualine_theme()
   local default_section = { fg = M.palette.gray2, bg = M.palette.bg_dark }
   local default = {
     normal = {
@@ -205,8 +205,16 @@ function M.setup_lualine()
       c = default_section,
     },
   }
+  return default
+end
+
+function M.get_lualine_theme()
+  return default_lualine_theme()
+end
+
+function M.setup_lualine()
   require("lualine").setup({
-    options = { theme = default },
+    options = { theme = default_lualine_theme() },
   })
 end
 
