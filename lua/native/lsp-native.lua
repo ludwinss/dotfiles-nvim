@@ -21,26 +21,36 @@ local signs = {
 }
 
 M.virtual_diagnostics = true
-function M.toggle_virtual_diagnostics()
-	M.virtual_diagnostics = not M.virtual_diagnostics
-	vim.diagnostic.config({
-		signs = signs,
-		virtual_lines = M.virtual_diagnostics,
-		virtual_text = false,
-		update_in_insert = true,
-		severity_sort = true,
-	})
-	U.merge_highlights_table({
-		DiagnosticUnderlineError = { underline = not M.virtual_diagnostics },
-		DiagnosticUnderlineWarn = { underline = not M.virtual_diagnostics },
-		DiagnosticUnderlineHint = { underline = not M.virtual_diagnostics },
-		DiagnosticUnderlineOk = { underline = not M.virtual_diagnostics },
-		DiagnosticUnderlineInfo = { underline = not M.virtual_diagnostics },
-	})
-	require("utils").refresh_statusline()
+function M.toggle_virtual_diagnostics(opts)
+    opts = opts or {}
+    local should_notify = opts.notify
+    if should_notify == nil then
+        should_notify = true
+    end
+
+    M.virtual_diagnostics = not M.virtual_diagnostics
+    vim.diagnostic.config({
+        signs = signs,
+        virtual_lines = M.virtual_diagnostics,
+        virtual_text = false,
+        update_in_insert = true,
+        severity_sort = true,
+    })
+    U.merge_highlights_table({
+        DiagnosticUnderlineError = { underline = not M.virtual_diagnostics },
+        DiagnosticUnderlineWarn = { underline = not M.virtual_diagnostics },
+        DiagnosticUnderlineHint = { underline = not M.virtual_diagnostics },
+        DiagnosticUnderlineOk = { underline = not M.virtual_diagnostics },
+        DiagnosticUnderlineInfo = { underline = not M.virtual_diagnostics },
+    })
+    require("utils").refresh_statusline()
+
+    if should_notify then
+        vim.notify("Diagnosticos virtuales: " .. (M.virtual_diagnostics and "Activados" or "Desactivados"), vim.log.levels.INFO)
+    end
 end
 
-M.toggle_virtual_diagnostics()
+M.toggle_virtual_diagnostics({ notify = false })
 
 -- TODO: For some reason this is still required for telescope stuff.
 vim.fn.sign_define("DiagnosticSignError", { text = "", numhl = "DiagnosticSignError" })
@@ -106,10 +116,15 @@ end
 M.format_enabled = true
 vim.g.disable_autoformat = not M.format_enabled
 
+function M.is_format_active()
+	return M.format_enabled and not vim.g.disable_autoformat
+end
+
 function M.toggle_format_enabled()
 	M.format_enabled = not M.format_enabled
 	vim.g.disable_autoformat = not M.format_enabled
 	require("utils").refresh_statusline()
+	vim.notify("Autoformato: " .. (M.is_format_active() and "Activado" or "Desactivado"), vim.log.levels.INFO)
 end
 
 M.copilot_enabled = true
@@ -125,12 +140,13 @@ function M.toggle_copilot()
 	end
 
 	require("utils").refresh_statusline()
+	vim.notify("Copilot: " .. (M.copilot_enabled and "Activado" or "Desactivado"), vim.log.levels.INFO)
 end
 
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 	callback = function()
 		local L = require("native.lsp-native")
-		if L.format_enabled then
+		if L.is_format_active() then
 			L.format_buffer()
 		end
 	end,

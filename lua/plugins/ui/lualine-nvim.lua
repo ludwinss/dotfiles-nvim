@@ -84,8 +84,8 @@ end
 local function resolve_theme()
 	local palette = {
 		text = pick(
-			hl_color("StatusLine", "fg"),
 			hl_color("Normal", "fg"),
+			hl_color("StatusLine", "fg"),
 			default_fg()
 		),
 		dim = pick(
@@ -166,10 +166,6 @@ local default_z = {
 	},
 }
 
-local function enabled_color(flag, active, inactive)
-	return flag and active or inactive
-end
-
 function M.setup()
 	local palette = resolve_theme()
 	local text_hl = palette.text and { fg = palette.text } or nil
@@ -178,28 +174,11 @@ function M.setup()
 	local red = palette.red
 	local lualine_theme = palette.lualine
 
-	local function active_green()
-		return green and { fg = green } or text_hl
-	end
-
 	local function recording_color()
 		if U.is_recording() then
 			return red and { fg = red } or text_hl
 		end
 		return text_hl
-	end
-
-	local function indicator(icon, flag_fn)
-		return {
-			function()
-				return icon
-			end,
-			color = function()
-				local enabled = type(flag_fn) == "function" and flag_fn() or flag_fn
-				return enabled_color(enabled, active_green(), icon_hl)
-			end,
-			padding = { left = 1, right = 1 },
-		}
 	end
 
 	local tree = {
@@ -292,15 +271,6 @@ function M.setup()
 					padding = { left = 1, right = 1 },
 				},
 				{ U.current_buffer_lsp, padding = { left = 1, right = 1 }, color = text_hl, icon = { " ", color = icon_hl } },
-				indicator("󰚩", function()
-					return lsp_native.copilot_enabled
-				end),
-				indicator("", function()
-					return lsp_native.virtual_diagnostics
-				end),
-				indicator("󰉼", function()
-					return lsp_native.format_enabled
-				end),
 			},
 			lualine_y = {},
 			lualine_z = default_z,

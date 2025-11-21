@@ -140,7 +140,13 @@ function M.hl_group_rgb(group)
 end
 
 function M.refresh_statusline()
-	require("lualine").refresh({ statusline = true })
+	vim.schedule(function()
+		local ok, lualine = pcall(require, "lualine")
+		if ok and lualine.refresh then
+			lualine.refresh({ place = { "statusline" }, trigger = "state_change" })
+		end
+		pcall(vim.cmd, "redrawstatus")
+	end)
 end
 
 function M.get_hl_group(name)
