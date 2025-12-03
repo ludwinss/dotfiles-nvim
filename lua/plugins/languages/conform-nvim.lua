@@ -26,7 +26,7 @@ require("conform").setup({
 
 		python = { "ruff_format", "ruff_fix" },
 
-		json = { "prettierd" },
+		json = { "prettierd", "fixjson" },
 		markdown = { "prettierd" },
 
 		csharp = { "csharpier" },

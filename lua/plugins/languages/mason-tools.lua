@@ -3,6 +3,7 @@ require("mason-tool-installer").setup({
 		-- "csharpier", Ahora usamos el dotnet tools install csharpier
 		"stylua",
 		"prettierd",
+		"fixjson",
 		"sql-formatter",
 		"shfmt",
 	},

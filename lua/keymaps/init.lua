@@ -21,6 +21,7 @@ function M.init()
 	M.zenmode()
 	M.completion()
 	M.terminal()
+	M.testing()
 end
 
 -- dont touch
@@ -614,4 +615,40 @@ function M.terminal()
 	keymap(n, "<leader>t", "<cmd>ToggleTerm<CR>", vim.tbl_extend("force", default_opts, { desc = "Abrir terminal" }))
 end
 
+function M.testing()
+	local function with_neotest(fn)
+		return function()
+			local ok, neotest = pcall(require, "neotest")
+			if not ok then
+				vim.notify("neotest no está instalado o no se pudo cargar", vim.log.levels.WARN)
+				return
+			end
+			fn(neotest)
+		end
+	end
+
+	keymap(
+		"n",
+		"<leader>ta",
+		with_neotest(function(neotest)
+			neotest.run.run({ suite = true })
+			neotest.summary.open()
+		end),
+		vim.tbl_extend("force", default_opts, {
+			desc = "Neotest: ejecutar toda la suite del proyecto",
+		})
+	)
+
+	keymap(
+		"n",
+		"gt",
+		with_neotest(function(neotest)
+			neotest.run.run() -- nearest
+			neotest.summary.open()
+		end),
+		vim.tbl_extend("force", default_opts, {
+			desc = "Neotest: ejecutar test más cercano",
+		})
+	)
+end
 return M

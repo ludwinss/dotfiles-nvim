@@ -305,4 +305,21 @@ return {
 			require("plugins.ui.preview-markdown-nvim")
 		end,
 	},
+	{
+		"nvim-neotest/neotest",
+		event = "VeryLazy",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+			"antoinemadec/FixCursorHold.nvim",
+
+			"nvim-neotest/neotest-go",
+			"nvim-neotest/neotest-python",
+			"nvim-neotest/neotest-jest",
+			"rouge8/neotest-rust",
+		},
+		config = function()
+			require("plugins.languages.neotest")
+		end,
+	},
 }
