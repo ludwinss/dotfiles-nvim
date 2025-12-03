@@ -7,6 +7,6 @@ neotest.setup({
 		require("neotest-rust")({ args = { "--nocapture" } }),
 	},
 	quickfix = { open = false },
-	output = { enabled = true, open_on_run = true },
+	output = { enabled = true, open_on_run = false },
 	summary = { follow = true },
 })

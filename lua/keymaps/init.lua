@@ -631,7 +631,7 @@ function M.testing()
 		"n",
 		"<leader>ta",
 		with_neotest(function(neotest)
-			neotest.run.run({ suite = true })
+			neotest.run.run({ suite = true, strategy = "overseer" })
 			neotest.summary.open()
 		end),
 		vim.tbl_extend("force", default_opts, {
@@ -643,11 +643,30 @@ function M.testing()
 		"n",
 		"gt",
 		with_neotest(function(neotest)
-			neotest.run.run() -- nearest
+			neotest.run.run({
+				strategy = "overseer",
+			})
 			neotest.summary.open()
 		end),
 		vim.tbl_extend("force", default_opts, {
 			desc = "Neotest: ejecutar test más cercano",
+		})
+	)
+	keymap(
+		"n",
+		"<leader>tt",
+		"<cmd>OverseerToggle<CR>",
+		vim.tbl_extend("force", default_opts, {
+			desc = "Overseer: abrir/cerrar panel de tareas",
+		})
+	)
+
+	keymap(
+		"n",
+		"<leader>tc",
+		"<cmd>OverseerRun<CR>",
+		vim.tbl_extend("force", default_opts, {
+			desc = "Overseer: ejecutar comando o tarea",
 		})
 	)
 end

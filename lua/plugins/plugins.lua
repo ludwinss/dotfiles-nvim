@@ -322,4 +322,8 @@ return {
 			require("plugins.languages.neotest")
 		end,
 	},
+	{
+		"stevearc/overseer.nvim",
+		opts = {},
+	},
 }
