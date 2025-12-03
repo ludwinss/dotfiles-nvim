@@ -612,7 +612,7 @@ function M.noice()
 end
 
 function M.terminal()
-	keymap(n, "<leader>t", "<cmd>ToggleTerm<CR>", vim.tbl_extend("force", default_opts, { desc = "Abrir terminal" }))
+	keymap(n, "tt", "<cmd>ToggleTerm<CR>", vim.tbl_extend("force", default_opts, { desc = "Abrir terminal" }))
 end
 
 function M.testing()
@@ -632,7 +632,6 @@ function M.testing()
 		"<leader>ta",
 		with_neotest(function(neotest)
 			neotest.run.run({ suite = true, strategy = "overseer" })
-			neotest.summary.open()
 		end),
 		vim.tbl_extend("force", default_opts, {
 			desc = "Neotest: ejecutar toda la suite del proyecto",
@@ -646,7 +645,6 @@ function M.testing()
 			neotest.run.run({
 				strategy = "overseer",
 			})
-			neotest.summary.open()
 		end),
 		vim.tbl_extend("force", default_opts, {
 			desc = "Neotest: ejecutar test más cercano",
@@ -654,10 +652,13 @@ function M.testing()
 	)
 	keymap(
 		"n",
-		"<leader>tt",
-		"<cmd>OverseerToggle<CR>",
+		"<leader>ts",
+		with_neotest(function(neotest)
+			neotest.summary.toggle()
+			vim.cmd("OverseerToggle")
+		end),
 		vim.tbl_extend("force", default_opts, {
-			desc = "Overseer: abrir/cerrar panel de tareas",
+			desc = "Neotest/Overseer: mostrar/ocultar resumen y panel",
 		})
 	)
 
