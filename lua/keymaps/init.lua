@@ -654,11 +654,10 @@ function M.testing()
 		"n",
 		"<leader>ts",
 		with_neotest(function(neotest)
-			neotest.summary.toggle()
-			vim.cmd("OverseerToggle")
+			require("keymaps.utils").toggle_test_views(neotest)
 		end),
 		vim.tbl_extend("force", default_opts, {
-			desc = "Neotest/Overseer: mostrar/ocultar resumen y panel",
+			desc = "Neotest/Overseer: mostrar/ocultar resumen y panel juntos",
 		})
 	)
 

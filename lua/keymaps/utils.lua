@@ -78,4 +78,51 @@ function M.toggle_term(term)
 	vim.keymap.set("n", "<Esc><Esc>", "<cmd>bd!<CR>", opts)
 end
 
+local function is_summary_open()
+	for _, win in ipairs(vim.api.nvim_list_wins()) do
+		local buf = vim.api.nvim_win_get_buf(win)
+		if vim.api.nvim_get_option_value("filetype", { buf = buf }) == "neotest-summary" then
+			return true
+		end
+	end
+	return false
+end
+
+local function is_overseer_open()
+	for _, win in ipairs(vim.api.nvim_list_wins()) do
+		local buf = vim.api.nvim_win_get_buf(win)
+		local filetype = vim.api.nvim_get_option_value("filetype", { buf = buf })
+		local name = vim.api.nvim_buf_get_name(buf)
+		if filetype == "OverseerList" or filetype == "overseer" or name:match("overseer://") then
+			return true
+		end
+	end
+	return false
+end
+
+function M.toggle_test_views(neotest)
+	local overseer_ok, overseer = pcall(require, "overseer")
+	if not overseer_ok then
+		vim.notify("overseer no está instalado o no se pudo cargar", vim.log.levels.WARN)
+	end
+
+	local summary_open = is_summary_open()
+	local overseer_open = overseer_ok and is_overseer_open()
+
+	if summary_open or overseer_open then
+		if summary_open then
+			neotest.summary.close()
+		end
+		if overseer_ok and overseer_open then
+			overseer.close()
+		end
+		return
+	end
+
+	neotest.summary.open()
+	if overseer_ok then
+		overseer.open()
+	end
+end
+
 return M
