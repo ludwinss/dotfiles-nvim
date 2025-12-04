@@ -240,7 +240,7 @@ function M.setup()
 			},
 			lualine_b = {},
 			lualine_c = {
-				{ U.get_recording_state_icon, color = recording_color, padding = 0 },
+				{ U.get_recording_state_icon, color = recording_color, padding = { left = 1, right = 1 } },
 				{ "branch", color = text_hl, icon = { " ", color = icon_hl }, padding = 0 },
 				{
 					"diff",
