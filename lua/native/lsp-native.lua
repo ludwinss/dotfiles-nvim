@@ -22,32 +22,28 @@ local signs = {
 
 M.virtual_diagnostics = true
 function M.toggle_virtual_diagnostics(opts)
-    opts = opts or {}
-    local should_notify = opts.notify
-    if should_notify == nil then
-        should_notify = true
-    end
+	opts = opts or {}
 
-    M.virtual_diagnostics = not M.virtual_diagnostics
-    vim.diagnostic.config({
-        signs = signs,
-        virtual_lines = M.virtual_diagnostics,
-        virtual_text = false,
-        update_in_insert = true,
-        severity_sort = true,
-    })
-    U.merge_highlights_table({
-        DiagnosticUnderlineError = { underline = not M.virtual_diagnostics },
-        DiagnosticUnderlineWarn = { underline = not M.virtual_diagnostics },
-        DiagnosticUnderlineHint = { underline = not M.virtual_diagnostics },
-        DiagnosticUnderlineOk = { underline = not M.virtual_diagnostics },
-        DiagnosticUnderlineInfo = { underline = not M.virtual_diagnostics },
-    })
-    require("utils").refresh_statusline()
+	M.virtual_diagnostics = not M.virtual_diagnostics
+	vim.diagnostic.config({
+		signs = signs,
+		virtual_lines = M.virtual_diagnostics,
+		virtual_text = false,
+		update_in_insert = true,
+		severity_sort = true,
+	})
+	U.merge_highlights_table({
+		DiagnosticUnderlineError = { underline = not M.virtual_diagnostics },
+		DiagnosticUnderlineWarn = { underline = not M.virtual_diagnostics },
+		DiagnosticUnderlineHint = { underline = not M.virtual_diagnostics },
+		DiagnosticUnderlineOk = { underline = not M.virtual_diagnostics },
+		DiagnosticUnderlineInfo = { underline = not M.virtual_diagnostics },
+	})
+	require("utils").refresh_statusline()
+end
 
-    if should_notify then
-        vim.notify("Diagnosticos virtuales: " .. (M.virtual_diagnostics and "Activados" or "Desactivados"), vim.log.levels.INFO)
-    end
+function M.is_virtual_diagnostics_active()
+	return M.virtual_diagnostics
 end
 
 M.toggle_virtual_diagnostics({ notify = false })
@@ -124,11 +120,14 @@ function M.toggle_format_enabled()
 	M.format_enabled = not M.format_enabled
 	vim.g.disable_autoformat = not M.format_enabled
 	require("utils").refresh_statusline()
-	vim.notify("Autoformato: " .. (M.is_format_active() and "Activado" or "Desactivado"), vim.log.levels.INFO)
 end
 
 M.copilot_enabled = true
 vim.g.disable_completion = not M.copilot_enabled
+
+function M.is_copilot_active()
+	return M.copilot_enabled and not vim.g.disable_completion
+end
 
 function M.toggle_copilot()
 	M.copilot_enabled = not M.copilot_enabled
@@ -140,7 +139,6 @@ function M.toggle_copilot()
 	end
 
 	require("utils").refresh_statusline()
-	vim.notify("Copilot: " .. (M.copilot_enabled and "Activado" or "Desactivado"), vim.log.levels.INFO)
 end
 
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {

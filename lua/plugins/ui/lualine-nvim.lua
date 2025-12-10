@@ -83,29 +83,10 @@ end
 
 local function resolve_theme()
 	local palette = {
-		text = pick(
-			hl_color("Normal", "fg"),
-			hl_color("StatusLine", "fg"),
-			default_fg()
-		),
-		dim = pick(
-			hl_color("StatusLineNC", "fg"),
-			hl_color("LineNr", "fg"),
-			hl_color("Comment", "fg"),
-			default_fg()
-		),
-		green = pick(
-			hl_color("DiagnosticOk", "fg"),
-			hl_color("DiffAdd", "fg"),
-			hl_color("String", "fg"),
-			"#8ec07c"
-		),
-		red = pick(
-			hl_color("DiagnosticError", "fg"),
-			hl_color("DiffDelete", "fg"),
-			hl_color("Error", "fg"),
-			"#f7768e"
-		),
+		text = pick(hl_color("Normal", "fg"), hl_color("StatusLine", "fg"), default_fg()),
+		dim = pick(hl_color("StatusLineNC", "fg"), hl_color("LineNr", "fg"), hl_color("Comment", "fg"), default_fg()),
+		green = pick(hl_color("DiagnosticOk", "fg"), hl_color("DiffAdd", "fg"), hl_color("String", "fg"), "#8ec07c"),
+		red = pick(hl_color("DiagnosticError", "fg"), hl_color("DiffDelete", "fg"), hl_color("Error", "fg"), "#f7768e"),
 	}
 
 	local colors_name = type(vim.g.colors_name) == "string" and vim.g.colors_name or nil
@@ -166,6 +147,31 @@ local default_z = {
 	},
 }
 
+local function safe_enabled(fn)
+	local ok, value = pcall(fn)
+	if ok then
+		return value
+	end
+	return false
+end
+
+local function build_status_component(opts)
+	return {
+		function()
+			local enabled = safe_enabled(opts.enabled)
+			return opts.icon
+		end,
+		color = function()
+			local enabled = safe_enabled(opts.enabled)
+			if enabled then
+				return opts.colors.on
+			end
+			return opts.colors.off
+		end,
+		padding = opts.padding or { left = 0, right = 1 },
+	}
+end
+
 function M.setup()
 	local palette = resolve_theme()
 	local text_hl = palette.text and { fg = palette.text } or nil
@@ -173,6 +179,10 @@ function M.setup()
 	local green = palette.green
 	local red = palette.red
 	local lualine_theme = palette.lualine
+	local status_colors = {
+		on = { fg = green or "#7ef29d", bg = "NONE" },
+		off = { fg = red or "#ff6b6b", bg = "NONE" },
+	}
 
 	local function recording_color()
 		if U.is_recording() then
@@ -270,9 +280,39 @@ function M.setup()
 					colored = true,
 					padding = { left = 1, right = 1 },
 				},
-				{ U.current_buffer_lsp, padding = { left = 1, right = 1 }, color = text_hl, icon = { " ", color = icon_hl } },
+				{
+					U.current_buffer_lsp,
+					padding = { left = 1, right = 1 },
+					color = text_hl,
+					icon = { " ", color = icon_hl },
+				},
 			},
-			lualine_y = {},
+			lualine_y = {
+				build_status_component({
+					icon = " ",
+					enabled = function()
+						return lsp_native.is_copilot_active and lsp_native.is_copilot_active()
+					end,
+					colors = status_colors,
+				}),
+				build_status_component({
+					icon = " ",
+					enabled = function()
+						if lsp_native.is_virtual_diagnostics_active then
+							return lsp_native.is_virtual_diagnostics_active()
+						end
+						return false
+					end,
+					colors = status_colors,
+				}),
+				build_status_component({
+					icon = "󰉢 ",
+					enabled = function()
+						return lsp_native.is_format_active()
+					end,
+					colors = status_colors,
+				}),
+			},
 			lualine_z = default_z,
 		},
 		options = options,

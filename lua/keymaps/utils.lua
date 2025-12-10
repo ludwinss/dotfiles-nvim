@@ -1,4 +1,5 @@
 local M = {}
+local U = require("utils")
 
 function M.save_file()
 	if vim.api.nvim_buf_get_option(0, "readonly") then
@@ -17,6 +18,11 @@ M.DAP_UI_ENABLED = false
 function M.dap_toggle_ui()
 	require("plugins.ui.dapui-nvim").toggle()
 	M.DAP_UI_ENABLED = not M.DAP_UI_ENABLED
+	U.refresh_statusline()
+end
+
+function M.is_dap_ui_enabled()
+	return M.DAP_UI_ENABLED
 end
 
 function M.dap_float_scope()
