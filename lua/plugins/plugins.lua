@@ -298,12 +298,9 @@ return {
 		end,
 	},
 	{
-		"iamcco/markdown-preview.nvim",
-		build = "cd app && npm install",
-		ft = { "markdown" },
-		config = function()
-			require("plugins.ui.preview-markdown-nvim")
-		end,
+		"MeanderingProgrammer/render-markdown.nvim",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		opts = {},
 	},
 	{
 		"nvim-neotest/neotest",
