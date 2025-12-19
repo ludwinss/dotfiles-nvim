@@ -1,4 +1,5 @@
 local CMP = require("cmp")
+local compare = require("cmp.config.compare")
 local U = require("utils")
 
 local function format(_, item)
@@ -54,6 +55,19 @@ CMP.setup({
 	formatting = formatting,
 	window = window,
 	sources = sources,
+	sorting = {
+		priority_weight = 2,
+		comparators = {
+			compare.sort_text,
+			compare.score,
+			compare.recently_used,
+			compare.locality,
+			compare.exact,
+			compare.kind,
+			compare.length,
+			compare.order,
+		},
+	},
 	performance = {
 		debounce = 50,
 	},
