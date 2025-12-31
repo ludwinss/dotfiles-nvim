@@ -114,6 +114,17 @@ function M.git()
 			desc = "Culpa",
 		})
 	)
+
+	keymap(
+		n,
+		"<leader>gg",
+		function()
+			require("keymaps.utils").toggle_neogit()
+		end,
+		vim.tbl_extend("force", default_opts, {
+			desc = "Toggle Neogit UI",
+		})
+	)
 end
 
 function M.lsp()
