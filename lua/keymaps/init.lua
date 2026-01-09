@@ -95,6 +95,14 @@ function M.editing()
 	keymap(v, "<C-j>", function()
 		require("keymaps.utils").select_current_function()
 	end, vim.tbl_extend("force", default_opts, { desc = "Seleccionar método" }))
+
+	keymap(n, "]]", function()
+		require("keymaps.utils").goto_function("next")
+	end, vim.tbl_extend("force", default_opts, { desc = "Ir al siguiente método/función" }))
+
+	keymap(n, "[[", function()
+		require("keymaps.utils").goto_function("prev")
+	end, vim.tbl_extend("force", default_opts, { desc = "Ir al método/función anterior" }))
 end
 
 --TODO: dont touch

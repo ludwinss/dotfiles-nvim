@@ -153,4 +153,18 @@ function M.toggle_neogit()
 	pcall(vim.cmd, "Neogit")
 end
 
+function M.goto_function(direction)
+	local ok, move = pcall(require, "nvim-treesitter.textobjects.move")
+	if not ok then
+		vim.notify("nvim-treesitter-textobjects no está disponible", vim.log.levels.WARN)
+		return
+	end
+
+	if direction == "next" then
+		move.goto_next_start("@function.outer")
+	elseif direction == "prev" then
+		move.goto_previous_start("@function.outer")
+	end
+end
+
 return M
