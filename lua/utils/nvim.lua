@@ -94,16 +94,16 @@ function M.current_buffer_full_file()
 end
 
 function M.current_buffer_lsp()
-	local buf_ft = M.current_buffer_filetype()
-	local clients = vim.lsp.get_clients()
-	if next(clients) == nil then
+	local clients = vim.lsp.get_clients({ bufnr = 0 })
+	if not clients or next(clients) == nil then
 		return ""
 	end
 	local current_clients = ""
+	local seen = {}
 
 	for _, client in ipairs(clients) do
-		local filetypes = client.config.filetypes
-		if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
+		if not seen[client.name] then
+			seen[client.name] = true
 			current_clients = current_clients .. client.name .. " "
 		end
 	end

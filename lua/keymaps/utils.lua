@@ -67,6 +67,15 @@ function M.toggle_completion()
 	end
 end
 
+function M.select_current_function()
+	local ok, ts_select = pcall(require, "nvim-treesitter.textobjects.select")
+	if not ok then
+		vim.notify("nvim-treesitter-textobjects no está disponible", vim.log.levels.WARN)
+		return
+	end
+	ts_select.select_textobject("@function.outer")
+end
+
 function M.close_all_oil_windows()
 	for _, win in ipairs(vim.api.nvim_list_wins()) do
 		local buf = vim.api.nvim_win_get_buf(win)
