@@ -10,6 +10,7 @@ require("nordic").setup({
 		highlights.CmpItemSel = { link = "PmenuSel" }
 		highlights.TelescopeSelection = { bg = pallette.white2, fg = pallette.black2 }
 		highlights.TelescopeSelectionCaret = { bg = pallette.white2, fg = pallette.black2, bold = true }
+		highlights.Comment = { fg = pallette.gray5, italic = true }
 		return highlights
 	end,
 })
