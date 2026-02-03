@@ -6,6 +6,10 @@ require("nordic").setup({
 	},
 	on_highlight = function(highlights, pallette)
 		highlights.Visual = { bg = pallette.orange.base, fg = pallette.black2 }
+		highlights.PmenuSel = { bg = pallette.white2, fg = pallette.black2 }
+		highlights.CmpItemSel = { link = "PmenuSel" }
+		highlights.TelescopeSelection = { bg = pallette.white2, fg = pallette.black2 }
+		highlights.TelescopeSelectionCaret = { bg = pallette.white2, fg = pallette.black2, bold = true }
 		return highlights
 	end,
 })

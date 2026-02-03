@@ -31,7 +31,7 @@ CMP.setup.filetype({ "tex", "latex" }, tex)
 
 local cmdline_window = {
 	completion = CMP.config.window.bordered({
-		winhighlight = "Normal:Pmenu,FloatBorder:SpecialCmpBorder,Search:None",
+		winhighlight = "Normal:Pmenu,FloatBorder:SpecialCmpBorder,CursorLine:PmenuSel,Search:None",
 		scrollbar = true,
 		border = U.get_border_chars("cmdline"),
 		col_offset = -4,
@@ -50,7 +50,7 @@ CMP.setup.cmdline({ ":", ":!" }, cmdline)
 
 local search_window = {
 	completion = CMP.config.window.bordered({
-		winhighlight = "Normal:Pmenu,FloatBorder:SpecialCmpBorder,Search:None",
+		winhighlight = "Normal:Pmenu,FloatBorder:SpecialCmpBorder,CursorLine:PmenuSel,Search:None",
 		scrollbar = true,
 		border = U.get_border_chars("search"),
 		col_offset = -1,

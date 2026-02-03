@@ -28,14 +28,14 @@ local formatting = {
 
 local window = {
 	completion = CMP.config.window.bordered({
-		winhighlight = "Normal:Pmenu,FloatBorder:SpecialCmpBorder,Search:None",
+		winhighlight = "Normal:Pmenu,FloatBorder:SpecialCmpBorder,CursorLine:PmenuSel,Search:None",
 		scrollbar = true,
 		border = "rounded",
 		col_offset = -1,
 		side_padding = 0,
 	}),
 	documentation = CMP.config.window.bordered({
-		winhighlight = "Normal:Pmenu,FloatBorder:SpecialCmpBorder,Search:None",
+		winhighlight = "Normal:Pmenu,FloatBorder:SpecialCmpBorder,CursorLine:PmenuSel,Search:None",
 		scrollbar = true,
 		border = "rounded",
 	}),
