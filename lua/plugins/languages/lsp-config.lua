@@ -63,19 +63,6 @@ vim.lsp.config("ltex", {
 	},
 })
 
-vim.lsp.config("dart", {
-	cmd = { "dart", "language-server", "--protocol=lsp" },
-	filetypes = { "dart" },
-	init_options = {
-		onlyAnalyzeProjectsWithOpenFiles = true,
-		suggestFromUnimportedLibraries = true,
-		closingLabels = true,
-		outline = true,
-		flutterOutline = true,
-	},
-	settings = { dart = { completeFunctionCalls = true, showTodos = true } },
-})
-
 vim.lsp.config("ts_ls", {
 	settings = {
 		typescript = { format = { enable = false } },

@@ -95,15 +95,18 @@ function M.prev_diag()
 	})
 end
 
-function M.format_buffer()
+function M.format_buffer(opts)
+	opts = opts or {}
+	if not opts.force and not M.is_format_active() then
+		return
+	end
+
 	local conform = require("conform")
 	local cursor_position = vim.api.nvim_win_get_cursor(0)
-	vim.api.nvim_exec([[%s/\s\+$//e]], false)
-	vim.cmd("noh")
 
 	conform.format({
 		async = true,
-		lsp_fallback = true,
+		lsp_fallback = false,
 	})
 
 	vim.api.nvim_win_set_cursor(0, cursor_position)
@@ -140,14 +143,5 @@ function M.toggle_copilot()
 
 	require("utils").refresh_statusline()
 end
-
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-	callback = function()
-		local L = require("native.lsp-native")
-		if L.is_format_active() then
-			L.format_buffer()
-		end
-	end,
-})
 
 return M

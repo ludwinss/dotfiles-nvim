@@ -7,26 +7,26 @@ require("conform").setup({
 		end
 
 		local ft = vim.bo[bufnr].filetype
-		if ft == "csharp" or ft == "cs" then
-			return { timeout_ms = 800, lsp_fallback = false, quiet = true }
+		if ft == "dotenv" or ft == "conf" then
+			return
 		end
-		return { timeout_ms = 800, lsp_fallback = true, quiet = true }
+		return { timeout_ms = 800, lsp_fallback = false, quiet = true }
 	end,
 
-	default_format_opts = { lsp_format = "fallback" },
+	default_format_opts = { lsp_format = "never" },
 
 	formatters_by_ft = {
 		lua = { "stylua" },
-		rust = { "rustfmt", "lsp" },
+		rust = { "rustfmt" },
 
-		javascript = { "prettierd", "eslint_d" },
-		typescript = { "prettierd", "eslint_d" },
-		javascriptreact = { "prettierd", "eslint_d" },
-		typescriptreact = { "prettierd", "eslint_d" },
+		javascript = { "prettierd", "eslint_d", stop_after_first = true },
+		typescript = { "prettierd", "eslint_d", stop_after_first = true },
+		javascriptreact = { "prettierd", "eslint_d", stop_after_first = true },
+		typescriptreact = { "prettierd", "eslint_d", stop_after_first = true },
 
-		python = { "ruff_format", "ruff_fix" },
+		python = { "ruff_format" },
 
-		json = { "prettierd", "fixjson" },
+		json = { "prettierd", "fixjson", stop_after_first = true },
 		markdown = { "prettierd" },
 
 		csharp = { "csharpier" },
@@ -39,7 +39,7 @@ require("conform").setup({
 		bash = { "shfmt" },
 		mksh = { "shfmt" },
 
-		dart = { "dart" },
+		dart = { "dart_format" },
 	},
 
 	formatters = {

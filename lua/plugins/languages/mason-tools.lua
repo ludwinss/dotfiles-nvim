@@ -6,6 +6,7 @@ require("mason-tool-installer").setup({
 		"fixjson",
 		"sql-formatter",
 		"shfmt",
+		"dart-debug-adapter",
 	},
 	auto_update = true,
 	run_on_start = true,

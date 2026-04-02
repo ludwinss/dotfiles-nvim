@@ -243,10 +243,7 @@ function M.conformkeymap()
 		n,
 		"<leader>gf",
 		function()
-			require("conform").format({
-				async = true,
-				lsp_fallback = true,
-			})
+			require("native.lsp-native").format_buffer({ force = true })
 		end,
 		vim.tbl_extend("force", default_opts, {
 			desc = "Formatear archivo",

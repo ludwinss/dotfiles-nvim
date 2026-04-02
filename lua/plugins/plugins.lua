@@ -346,5 +346,16 @@ return {
 			"nvim-treesitter/nvim-treesitter",
 			"nvim-tree/nvim-web-devicons",
 		},
+		{
+			"nvim-flutter/flutter-tools.nvim",
+			lazy = false,
+			dependencies = {
+				"nvim-lua/plenary.nvim",
+				"stevearc/dressing.nvim",
+			},
+			config = function()
+				require("plugins.languages.flutter-tools-nvim")
+			end,
+		},
 	},
 }
