@@ -167,4 +167,18 @@ function M.goto_function(direction)
 	end
 end
 
+function M.switch_ltex_lang(lang)
+	local client = vim.lsp.get_clients({ name = "ltex" })[1]
+	if not client then
+		vim.notify("LTeX no está activo en este momento", vim.log.levels.WARN)
+		return
+	end
+
+	client.config.settings = client.config.settings or {}
+	client.config.settings.ltex = client.config.settings.ltex or {}
+	client.config.settings.ltex.language = lang
+	client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+	vim.notify("LTeX idioma cambiado a: " .. lang, vim.log.levels.INFO)
+end
+
 return M

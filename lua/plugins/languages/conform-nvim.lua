@@ -23,11 +23,13 @@ require("conform").setup({
 		typescript = { "prettierd", "eslint_d", stop_after_first = true },
 		javascriptreact = { "prettierd", "eslint_d", stop_after_first = true },
 		typescriptreact = { "prettierd", "eslint_d", stop_after_first = true },
+		vue = { "prettierd", "prettier", stop_after_first = true },
 
 		python = { "ruff_format" },
 
 		json = { "prettierd", "fixjson", stop_after_first = true },
 		markdown = { "prettierd" },
+		html = { "prettierd", "prettier", stop_after_first = true },
 
 		csharp = { "csharpier" },
 		cs = { "csharpier" },

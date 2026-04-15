@@ -13,6 +13,12 @@ return {
 		end,
 	},
 	{
+		"mfussenegger/nvim-lint",
+		config = function()
+			require("plugins.languages.linter")
+		end,
+	},
+	{
 		"neovim/nvim-lspconfig",
 		config = function()
 			require("plugins.languages.lsp-config")
@@ -262,13 +268,13 @@ return {
 			require("tmux").setup()
 		end,
 	},
+	-- {
+	-- 	"vyfor/cord.nvim",
+	-- 	build = "./build || .\\build",
+	-- 	event = "VeryLazy",
+	-- },
 	{
-		"vyfor/cord.nvim",
-		build = "./build || .\\build",
-		event = "VeryLazy",
-	},
-	{
-		"ggandor/leap.nvim",
+		url = "https://codeberg.org/andyg/leap.nvim",
 		dependencies = "tpope/vim-repeat",
 		keys = { "s", "S" },
 		config = function()

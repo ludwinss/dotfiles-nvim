@@ -21,6 +21,7 @@ M.servers = vim.tbl_map(normalize, {
 	"dockerls",
 	"docker_compose_language_service",
 	"html",
+	"vue_ls",
 	"jsonls",
 	"omnisharp",
 	"ruff",

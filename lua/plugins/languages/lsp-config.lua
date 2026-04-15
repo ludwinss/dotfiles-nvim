@@ -1,5 +1,6 @@
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 local mason = require("plugins.languages.mason-lsp")
+require("plugins.languages.ltex-nvim")
 
 local function on_attach(client, bufnr)
 	client.server_capabilities.documentFormattingProvider = false
@@ -53,7 +54,7 @@ vim.lsp.config("ltex", {
 	cmd_env = {
 		JAVA_TOOL_OPTIONS = "-Djdk.xml.totalEntitySizeLimit=0 --enable-native-access=ALL-UNNAMED",
 	},
-	filetypes = { "markdown", "tex", "plaintex", "text" },
+	filetypes = { "markdown", "tex", "plaintex", "gitcommit" },
 	settings = {
 		ltex = {
 			language = "es",

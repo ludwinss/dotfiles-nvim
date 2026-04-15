@@ -75,7 +75,11 @@ function M.native()
 			desc = "Ver página de manual",
 		})
 	)
-	keymap("n", "K", "<nop>", { desc = "Desactivar K por defecto" })
+	keymap(n, "K", function()
+		pcall(vim.lsp.buf.hover)
+	end, vim.tbl_extend("force", default_opts, {
+		desc = "Documentación flotante",
+	}))
 end
 
 --TODO: dont touch
