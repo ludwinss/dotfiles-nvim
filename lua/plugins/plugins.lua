@@ -1,6 +1,30 @@
 return {
 	-- LANGUAGES
 	{
+		"williamboman/mason.nvim",
+		lazy = false,
+		build = ":MasonUpdate",
+		config = function()
+			require("mason").setup()
+		end,
+	},
+	{
+		"williamboman/mason-lspconfig.nvim",
+		lazy = false,
+		dependencies = { "williamboman/mason.nvim" },
+		config = function()
+			require("plugins.languages.mason-lsp").setup()
+		end,
+	},
+	{
+		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		lazy = false,
+		dependencies = { "williamboman/mason.nvim" },
+		config = function()
+			require("plugins.languages.mason-tools")
+		end,
+	},
+	{
 		"rmagatti/auto-session",
 		config = function()
 			require("plugins.languages.sessions")
@@ -20,6 +44,10 @@ return {
 	},
 	{
 		"neovim/nvim-lspconfig",
+		dependencies = {
+			"williamboman/mason.nvim",
+			"williamboman/mason-lspconfig.nvim",
+		},
 		config = function()
 			require("plugins.languages.lsp-config")
 		end,
@@ -29,28 +57,6 @@ return {
 		"folke/lazydev.nvim",
 		ft = "lua",
 		dependencies = { "Bilal2453/luvit-meta" },
-	},
-	{
-		"williamboman/mason-lspconfig.nvim",
-		lazy = false,
-		config = function()
-			require("plugins.languages.mason-lsp").setup()
-		end,
-	},
-	{
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		lazy = false,
-		config = function()
-			require("plugins.languages.mason-tools")
-		end,
-	},
-	{
-		"williamboman/mason.nvim",
-		lazy = false,
-		build = ":MasonUpdate",
-		config = function()
-			require("mason").setup()
-		end,
 	},
 	{
 		"hrsh7th/nvim-cmp",

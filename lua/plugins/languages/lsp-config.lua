@@ -2,6 +2,8 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
 local mason = require("plugins.languages.mason-lsp")
 require("plugins.languages.ltex-nvim")
 
+local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
+
 local function on_attach(client, bufnr)
 	client.server_capabilities.documentFormattingProvider = false
 	client.server_capabilities.documentRangeFormattingProvider = false
@@ -14,12 +16,13 @@ vim.lsp.config("*", {
 	flags = { debounce_text_changes = 250 },
 })
 
-local omnisharp_bin = vim.fn.stdpath("data") .. "/mason/bin/OmniSharp"
+local omnisharp_bin = vim.fs.joinpath(mason_bin, "OmniSharp")
 vim.lsp.config("omnisharp", {
 	cmd = { omnisharp_bin, "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
 })
 
 vim.lsp.config("eslint", {
+	cmd = { vim.fs.joinpath(mason_bin, "vscode-eslint-language-server"), "--stdio" },
 	root_markers = {
 		".eslintrc",
 		".eslintrc.js",
@@ -65,6 +68,7 @@ vim.lsp.config("ltex", {
 })
 
 vim.lsp.config("ts_ls", {
+	cmd = { vim.fs.joinpath(mason_bin, "typescript-language-server"), "--stdio" },
 	settings = {
 		typescript = { format = { enable = false } },
 		javascript = { format = { enable = false } },
