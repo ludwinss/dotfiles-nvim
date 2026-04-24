@@ -6,7 +6,7 @@ oil.setup({
 		"icon",
 	},
 	float = {
-		padding = 2,
+		padding = 0,
 		max_width = 80,
 		max_height = 30,
 		border = "rounded",
@@ -33,6 +33,12 @@ oil.setup({
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "oil",
 	callback = function()
+		vim.wo.signcolumn = "no"
+		vim.wo.foldcolumn = "0"
+		vim.wo.number = true
+		vim.wo.relativenumber = false
+		vim.wo.statuscolumn = "%l "
+		vim.wo.numberwidth = 3
 		vim.keymap.set("n", "q", "<cmd>bd!<CR>", { buffer = true, desc = "Cerrar Oil" })
 	end,
 })

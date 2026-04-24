@@ -132,10 +132,12 @@ function M.apply()
 	local error_fg = ensure_contrast(pick(error.fg, "#cc241d"), bg, 4.5)
 	local warn_fg = ensure_contrast(pick(warn.fg, "#d79921"), bg, 4.5)
 	local ok_fg = ensure_contrast(pick(ok.fg, "#98971a"), bg, 4.5)
+	local info_fg = ensure_contrast(pick(hl("DiagnosticInfo").fg, accent_alt), bg, 4.5)
 
 	local elevated = blend(fg, bg, vim.o.background == "light" and 0.08 or 0.12)
 	local elevated_2 = blend(fg, bg, vim.o.background == "light" and 0.14 or 0.2)
 	local visual_bg = blend(accent_alt, bg, vim.o.background == "light" and 0.22 or 0.28)
+	local oil_bg = blend(fg, bg, vim.o.background == "light" and 0.04 or 0.06)
 
 	U.merge_highlights_table({
 		Normal = { fg = fg },
@@ -168,18 +170,56 @@ function M.apply()
 		DiagnosticError = { fg = error_fg },
 		DiagnosticWarn = { fg = warn_fg },
 		DiagnosticOk = { fg = ok_fg },
+		DiagnosticInfo = { fg = info_fg },
 		["@comment"] = { fg = muted, italic = true },
+		["@comment.documentation"] = { fg = muted, italic = true },
+		["@keyword.return"] = { fg = accent_alt, bold = true },
+		["@keyword.import"] = { fg = accent_alt, bold = true },
+		["@keyword.operator"] = { fg = accent_alt, bold = true },
 		["@keyword"] = { fg = accent_alt },
 		["@keyword.function"] = { fg = accent_alt, bold = true },
 		["@function"] = { fg = accent },
 		["@function.method"] = { fg = accent },
+		["@function.call"] = { fg = accent },
+		["@function.builtin"] = { fg = accent_alt, bold = true },
 		["@method"] = { fg = accent },
 		["@type"] = { fg = accent_alt },
 		["@type.builtin"] = { fg = accent_alt, bold = true },
+		["@type.definition"] = { fg = accent_alt, bold = true },
+		["@constructor"] = { fg = accent_alt, bold = true },
 		["@constant"] = { fg = accent },
+		["@constant.builtin"] = { fg = accent_alt, bold = true },
+		["@constant.macro"] = { fg = accent_alt, bold = true },
 		["@string"] = { fg = accent },
+		["@string.escape"] = { fg = accent_alt, bold = true },
+		["@number"] = { fg = accent },
+		["@boolean"] = { fg = accent_alt, bold = true },
+		["@operator"] = { fg = accent_alt },
+		["@punctuation.bracket"] = { fg = subtle },
+		["@punctuation.delimiter"] = { fg = subtle },
+		["@tag"] = { fg = accent_alt },
+		["@tag.attribute"] = { fg = accent },
+		["@tag.delimiter"] = { fg = subtle },
 		["@property"] = { fg = fg },
+		["@variable"] = { fg = fg },
+		["@variable.builtin"] = { fg = accent_alt, italic = true },
 		["@variable.member"] = { fg = fg },
+		OilDir = { fg = accent_alt, bg = oil_bg, bold = true },
+		OilDirIcon = { fg = accent_alt, bg = oil_bg, bold = true },
+		OilFile = { fg = fg, bg = oil_bg },
+		OilHidden = { fg = muted, bg = oil_bg, italic = true },
+		OilDirHidden = { fg = muted, bg = oil_bg, italic = true },
+		OilFileHidden = { fg = muted, bg = oil_bg, italic = true },
+		OilLink = { fg = accent, bg = oil_bg, underline = true },
+		OilLinkTarget = { fg = fg, bg = oil_bg },
+		OilOrphanLink = { fg = error_fg, bg = oil_bg, underline = true },
+		OilOrphanLinkTarget = { fg = error_fg, bg = oil_bg },
+		OilSocket = { fg = warn_fg, bg = oil_bg },
+		OilCreate = { fg = ok_fg, bg = oil_bg, bold = true },
+		OilDelete = { fg = error_fg, bg = oil_bg, bold = true },
+		OilMove = { fg = accent_alt, bg = oil_bg, bold = true },
+		OilCopy = { fg = accent, bg = oil_bg, bold = true },
+		OilChange = { fg = warn_fg, bg = oil_bg, bold = true },
 	})
 
 	U.refresh_statusline()
