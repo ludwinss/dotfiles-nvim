@@ -1,5 +1,6 @@
 require("native.options")
 require("native.default-theme")
+require("native.theme-contrast")
 require("native.lsp-native")
 require("native.winbar")
 require("native.statuscolumn")

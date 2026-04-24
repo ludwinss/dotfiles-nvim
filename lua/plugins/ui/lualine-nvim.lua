@@ -9,6 +9,87 @@ local function to_hex(color)
 	end
 end
 
+local function from_hex(hex)
+	if type(hex) ~= "string" then
+		return
+	end
+	hex = hex:gsub("#", "")
+	if #hex ~= 6 then
+		return
+	end
+	return {
+		r = tonumber(hex:sub(1, 2), 16),
+		g = tonumber(hex:sub(3, 4), 16),
+		b = tonumber(hex:sub(5, 6), 16),
+	}
+end
+
+local function clamp(value)
+	return math.max(0, math.min(255, math.floor(value + 0.5)))
+end
+
+local function blend(fg, bg, alpha)
+	local a = from_hex(fg)
+	local b = from_hex(bg)
+	if not a or not b then
+		return fg or bg
+	end
+	return string.format(
+		"#%02x%02x%02x",
+		clamp((alpha * a.r) + ((1 - alpha) * b.r)),
+		clamp((alpha * a.g) + ((1 - alpha) * b.g)),
+		clamp((alpha * a.b) + ((1 - alpha) * b.b))
+	)
+end
+
+local function luminance(hex)
+	local rgb = from_hex(hex)
+	if not rgb then
+		return 0
+	end
+
+	local function channel(v)
+		v = v / 255
+		if v <= 0.03928 then
+			return v / 12.92
+		end
+		return ((v + 0.055) / 1.055) ^ 2.4
+	end
+
+	return 0.2126 * channel(rgb.r) + 0.7152 * channel(rgb.g) + 0.0722 * channel(rgb.b)
+end
+
+local function contrast_ratio(fg, bg)
+	local l1 = luminance(fg)
+	local l2 = luminance(bg)
+	local lighter = math.max(l1, l2)
+	local darker = math.min(l1, l2)
+	return (lighter + 0.05) / (darker + 0.05)
+end
+
+local function ensure_contrast(fg, bg, min_ratio)
+	if not fg or not bg then
+		return fg
+	end
+	if contrast_ratio(fg, bg) >= min_ratio then
+		return fg
+	end
+
+	local target = vim.o.background == "light" and "#11131a" or "#f2f4f8"
+	local alpha = 0.15
+	local current = fg
+
+	while alpha <= 1 do
+		current = blend(target, current, alpha)
+		if contrast_ratio(current, bg) >= min_ratio then
+			return current
+		end
+		alpha = alpha + 0.1
+	end
+
+	return target
+end
+
 local function hl_color(group, attr)
 	local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = group, link = false })
 	if ok and hl[attr] then
@@ -29,6 +110,16 @@ local function try_require(mod)
 	if ok then
 		return value
 	end
+end
+
+local function resolve_lualine_theme(colors_name)
+	if not colors_name or colors_name == "" then
+		return
+	end
+
+	return try_require("lualine.themes." .. colors_name)
+		or try_require("lualine.themes." .. colors_name:gsub("%-", "_"))
+		or try_require("lualine.themes." .. colors_name:gsub("%.", "_"))
 end
 
 local function capture_highlight(name)
@@ -53,30 +144,38 @@ end
 local function build_dynamic_theme(palette)
 	local status = capture_highlight("StatusLine")
 	local status_nc = capture_highlight("StatusLineNC")
-	local base_bg = status.bg or default_bg()
-	local base_fg = palette.text or status.fg or default_fg()
-	local inactive_fg = status_nc.fg or palette.dim or base_fg
-	local inactive_bg = status_nc.bg or base_bg
+	local normal = capture_highlight("Normal")
+	local base_bg = normal.bg or status.bg or default_bg()
+	local section_bg = blend(palette.text or default_fg(), base_bg, vim.o.background == "light" and 0.08 or 0.12)
+	local section_bg_alt = blend(palette.text or default_fg(), base_bg, vim.o.background == "light" and 0.12 or 0.18)
+	local base_fg = ensure_contrast(palette.text or normal.fg or status.fg or default_fg(), section_bg, 7)
+	local inactive_fg = ensure_contrast(status_nc.fg or palette.dim or base_fg, section_bg, 4.5)
+	local inactive_bg = status_nc.bg or section_bg
 
 	local function strong(color)
-		return { fg = base_bg, bg = color or base_fg, gui = "bold" }
+		local bg = color or base_fg
+		local fg = ensure_contrast(base_bg, bg, 5.5)
+		return { fg = fg, bg = bg, gui = "bold" }
 	end
 
-	local neutral = { fg = base_fg, bg = base_bg }
+	local neutral = { fg = base_fg, bg = section_bg }
+	local neutral_alt = { fg = base_fg, bg = section_bg_alt }
 	local inactive = { fg = inactive_fg, bg = inactive_bg }
 
-	local insert = hl_color("String", "fg") or palette.green
-	local visual = hl_color("Type", "fg") or palette.red
-	local command = hl_color("Constant", "fg") or palette.green
-	local terminal = hl_color("Identifier", "fg") or palette.green
+	local insert = ensure_contrast(hl_color("String", "fg") or palette.green, section_bg, 4.5)
+	local visual = ensure_contrast(hl_color("Type", "fg") or palette.red, section_bg, 4.5)
+	local command = ensure_contrast(hl_color("Constant", "fg") or palette.green, section_bg, 4.5)
+	local terminal = ensure_contrast(hl_color("Identifier", "fg") or palette.green, section_bg, 4.5)
+	local replace = ensure_contrast(palette.red, section_bg, 4.5)
+	local normal_mode = ensure_contrast(palette.green, section_bg, 4.5)
 
 	return {
-		normal = { a = strong(palette.green), b = neutral, c = neutral },
-		insert = { a = strong(insert), b = neutral, c = neutral },
-		replace = { a = strong(palette.red), b = neutral, c = neutral },
-		visual = { a = strong(visual), b = neutral, c = neutral },
-		command = { a = strong(command), b = neutral, c = neutral },
-		terminal = { a = strong(terminal), b = neutral, c = neutral },
+		normal = { a = strong(normal_mode), b = neutral_alt, c = neutral },
+		insert = { a = strong(insert), b = neutral_alt, c = neutral },
+		replace = { a = strong(replace), b = neutral_alt, c = neutral },
+		visual = { a = strong(visual), b = neutral_alt, c = neutral },
+		command = { a = strong(command), b = neutral_alt, c = neutral },
+		terminal = { a = strong(terminal), b = neutral_alt, c = neutral },
 		inactive = { a = inactive, b = inactive, c = inactive },
 	}
 end
@@ -91,7 +190,7 @@ local function resolve_theme()
 
 	local colors_name = type(vim.g.colors_name) == "string" and vim.g.colors_name or nil
 	if colors_name and colors_name ~= "" then
-		palette.lualine = try_require("lualine.themes." .. colors_name)
+		palette.lualine = resolve_lualine_theme(colors_name)
 	end
 
 	if not palette.lualine and (colors_name == nil or colors_name == "" or colors_name == "default") then
