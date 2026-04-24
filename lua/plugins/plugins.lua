@@ -239,6 +239,30 @@ return {
 		"sainnhe/gruvbox-material",
 		lazy = true,
 		priority = 1000,
+		config = function()
+			require("plugins.themes.gruvbox-material")
+		end,
+	},
+	{
+		"ellisonleao/gruvbox.nvim",
+		priority = 1000,
+		config = function()
+			require("plugins.themes.gruvbox-config")
+		end,
+	},
+	{
+		"kvrohit/rasmus.nvim",
+		priority = 1000,
+		config = function()
+			require("plugins.themes.rasmus")
+		end,
+	},
+	{
+		"alligator/accent.vim",
+		priority = 1000,
+		config = function()
+			require("plugins.themes.accent")
+		end,
 	},
 	-- OTHER.
 	{

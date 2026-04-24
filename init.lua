@@ -15,4 +15,5 @@ require("native.options")
 require("plugins.init")
 require("native")
 require("keymaps").init()
-vim.cmd("colorscheme nordic")
+vim.cmd("colorscheme accent")
+vim.o.background = "dark"
