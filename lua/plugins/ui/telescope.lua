@@ -40,12 +40,13 @@ local picker_register = {
 local small_lsp_layout = {
 	layout_strategy = "vertical",
 	preview_title = "",
-	preview = true,
+	previewer = true,
 	wrap_results = false,
 	layout_config = {
 		height = 0.75,
 		width = 0.65,
 		mirror = true,
+		preview_cutoff = 1,
 	},
 	borderchars = {
 		prompt = prompt_chars,
@@ -58,14 +59,17 @@ local defaults = {
 	layout_strategy = "vertical",
 	preview_title = "",
 	dynamic_preview_title = false,
+	previewer = true,
 
 	layout_config = {
 		prompt_position = "top",
 		mirror = true,
 		height = 0.95,
 		width = 0.75,
+		preview_cutoff = 1,
 		vertical = {
 			preview_height = 0.55,
+			preview_cutoff = 1,
 		},
 	},
 
@@ -122,23 +126,28 @@ TS.setup({
 
 		live_grep = {
 			preview_title = "",
+			previewer = true,
 			cwd = U.current_work_dir(),
 		},
 		help_tags = {
 			preview_title = "",
+			previewer = true,
 			mappings = { i = { ["<CR>"] = require("telescope.actions").select_vertical } },
 		},
 		oldfiles = {
 			preview_title = "",
+			previewer = true,
 			cwd = U.current_work_dir(),
 		},
 		find_files = {
 			preview_title = "",
+			previewer = true,
 			cwd = U.current_work_dir(),
 		},
-		lsp_document_symbols = { preview_title = "" },
+		lsp_document_symbols = { preview_title = "", previewer = true },
 		man_pages = {
 			preview_title = "",
+			previewer = true,
 			mappings = { i = { ["<CR>"] = require("telescope.actions").select_vertical } },
 		},
 	},
