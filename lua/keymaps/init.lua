@@ -113,6 +113,39 @@ end
 function M.git()
 	keymap(
 		n,
+		"]h",
+		function()
+			require("gitsigns").next_hunk()
+		end,
+		vim.tbl_extend("force", default_opts, {
+			desc = "Ir al siguiente cambio git",
+		})
+	)
+
+	keymap(
+		n,
+		"[h",
+		function()
+			require("gitsigns").prev_hunk()
+		end,
+		vim.tbl_extend("force", default_opts, {
+			desc = "Ir al cambio git anterior",
+		})
+	)
+
+	keymap(
+		n,
+		"<leader>hp",
+		function()
+			require("gitsigns").preview_hunk_inline()
+		end,
+		vim.tbl_extend("force", default_opts, {
+			desc = "Previsualizar cambio git",
+		})
+	)
+
+		keymap(
+		n,
 		"<leader>v",
 		function()
 			require("keymaps.utils").toggle_diffview()
