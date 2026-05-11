@@ -167,6 +167,11 @@ function M.goto_function(direction)
 	end
 end
 
+function M.has_lsp_client(bufnr)
+	bufnr = bufnr or 0
+	return #vim.lsp.get_clients({ bufnr = bufnr }) > 0
+end
+
 function M.switch_ltex_lang(lang)
 	local client = vim.lsp.get_clients({ name = "ltex" })[1]
 	if not client then

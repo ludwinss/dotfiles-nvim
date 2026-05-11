@@ -40,13 +40,12 @@ local picker_register = {
 local small_lsp_layout = {
 	layout_strategy = "vertical",
 	preview_title = "",
-	previewer = true,
+	previewer = false,
 	wrap_results = false,
 	layout_config = {
 		height = 0.75,
 		width = 0.65,
 		mirror = true,
-		preview_cutoff = 1,
 	},
 	borderchars = {
 		prompt = prompt_chars,
@@ -144,7 +143,7 @@ TS.setup({
 			previewer = true,
 			cwd = U.current_work_dir(),
 		},
-		lsp_document_symbols = { preview_title = "", previewer = true },
+		lsp_document_symbols = { preview_title = "", previewer = false },
 		man_pages = {
 			preview_title = "",
 			previewer = true,

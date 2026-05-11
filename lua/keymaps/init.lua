@@ -75,11 +75,6 @@ function M.native()
 			desc = "Ver página de manual",
 		})
 	)
-	keymap(n, "K", function()
-		pcall(vim.lsp.buf.hover)
-	end, vim.tbl_extend("force", default_opts, {
-		desc = "Documentación flotante",
-	}))
 end
 
 --TODO: dont touch
@@ -457,7 +452,13 @@ function M.telescope()
 	keymap(
 		n,
 		"fs",
-		"<Cmd>Telescope lsp_document_symbols<CR>",
+		function()
+			if not require("keymaps.utils").has_lsp_client() then
+				vim.notify("No hay cliente LSP en este buffer", vim.log.levels.WARN)
+				return
+			end
+			require("telescope.builtin").lsp_document_symbols()
+		end,
 		vim.tbl_extend("force", default_opts, {
 			desc = "Símbolos de documento",
 		})
@@ -466,7 +467,13 @@ function M.telescope()
 	keymap(
 		n,
 		"gr",
-		"<Cmd>Telescope lsp_references<CR>",
+		function()
+			if not require("keymaps.utils").has_lsp_client() then
+				vim.notify("No hay cliente LSP en este buffer", vim.log.levels.WARN)
+				return
+			end
+			require("telescope.builtin").lsp_references()
+		end,
 		vim.tbl_extend("force", default_opts, {
 			desc = "Referencias LSP",
 		})
@@ -475,7 +482,13 @@ function M.telescope()
 	keymap(
 		n,
 		"gd",
-		"<Cmd>Telescope lsp_definitions<CR>",
+		function()
+			if not require("keymaps.utils").has_lsp_client() then
+				vim.notify("No hay cliente LSP en este buffer", vim.log.levels.WARN)
+				return
+			end
+			require("telescope.builtin").lsp_definitions()
+		end,
 		vim.tbl_extend("force", default_opts, {
 			desc = "Definiciones LSP",
 		})
@@ -484,7 +497,13 @@ function M.telescope()
 	keymap(
 		n,
 		"gi",
-		"<Cmd>Telescope lsp_implementations<CR>",
+		function()
+			if not require("keymaps.utils").has_lsp_client() then
+				vim.notify("No hay cliente LSP en este buffer", vim.log.levels.WARN)
+				return
+			end
+			require("telescope.builtin").lsp_implementations()
+		end,
 		vim.tbl_extend("force", default_opts, {
 			desc = "Buscar implementaciones",
 		})
