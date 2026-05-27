@@ -9,7 +9,7 @@ if not U.is_default() then
 end
 
 local picker_buffer = {
-	preview = false,
+	previewer = false,
 	wrap_results = false,
 	layout_config = {
 		height = 0.4,
@@ -29,7 +29,7 @@ local picker_buffer = {
 
 local picker_register = {
 	sort_mru = true,
-	preview = false,
+	previewer = false,
 	wrap_results = false,
 	layout_config = {
 		height = 0.6,

@@ -17,7 +17,6 @@ function M.init()
 	M.conformkeymap()
 	M.oil()
 	M.telescope()
-	M.editing()
 	M.zenmode()
 	M.completion()
 	M.terminal()
@@ -755,13 +754,16 @@ function M.claude()
 	keymap(n, "<leader>ar", "<cmd>ClaudeCode --resume<CR>", { desc = "Resume Claude" })
 	keymap(n, "<leader>aC", "<cmd>ClaudeCode --continue<CR>", { desc = "Continue Claude" })
 	keymap(n, "<leader>am", "<cmd>ClaudeCodeSelectModel<CR>", { desc = "Select Claude model" })
-	keymap(n, "<leader>ab", "<cmd>ClaudeCodeAdd %<CR>", { desc = "Add current buffer" })
+	keymap(n, "<leader>ab", function()
+		vim.cmd("ClaudeCodeAdd " .. vim.fn.expand("%:p"))
+	end, { desc = "Add current buffer" })
 	keymap(v, "<leader>as", "<cmd>ClaudeCodeSend<CR>", { desc = "Send to Claude" })
 
 	keymap(n, "<leader>aa", "<cmd>ClaudeCodeDiffAccept<CR>", { desc = "Accept diff" })
 	keymap(n, "<leader>ad", "<cmd>ClaudeCodeDiffDeny<CR>", { desc = "Deny diff" })
 
 	vim.api.nvim_create_autocmd("FileType", {
+		group = vim.api.nvim_create_augroup("ClaudeCodeTreeKeymap", { clear = true }),
 		pattern = { "NvimTree", "neo-tree", "oil", "minifiles", "netrw" },
 		callback = function()
 			keymap(n, "<leader>as", "<cmd>ClaudeCodeTreeAdd<CR>", {
