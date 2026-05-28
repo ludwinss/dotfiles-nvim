@@ -6,7 +6,7 @@ vim.g.mapleader = " "
 vim.opt.showmode = false
 vim.opt.clipboard:append("unnamedplus")
 vim.opt.swapfile = false
-vim.opt.mouse = ""
+vim.opt.mouse = "a"
 vim.opt.hlsearch = true
 
 vim.opt.ignorecase = true
@@ -32,26 +32,26 @@ vim.g.VM_silent_exit = 1
 vim.o.termguicolors = true
 
 if not U.is_default() then
-    vim.opt.fillchars = {
-        horiz = C.bottom_thin,
-        horizup = C.bottom_thin,
-        horizdown = C.right_thick,
-        vert = C.right_thick,
-        vertleft = C.right_thick,
-        vertright = C.right_thick,
-        verthoriz = C.right_thick,
-    }
+	vim.opt.fillchars = {
+		horiz = C.bottom_thin,
+		horizup = C.bottom_thin,
+		horizdown = C.right_thick,
+		vert = C.right_thick,
+		vertleft = C.right_thick,
+		vertright = C.right_thick,
+		verthoriz = C.right_thick,
+	}
 else
-    vim.opt.fillchars = {
-        eob = " ",
-        diff = "╱",
-        vert = C.right_thick,
-        vertleft = C.right_thick,
-        vertright = C.right_thick,
-        verthoriz = C.right_thick,
-        horiz = C.bottom_thin,
-        horizup = C.bottom_right_thin,
-    }
+	vim.opt.fillchars = {
+		eob = " ",
+		diff = "╱",
+		vert = C.right_thick,
+		vertleft = C.right_thick,
+		vertright = C.right_thick,
+		verthoriz = C.right_thick,
+		horiz = C.bottom_thin,
+		horizup = C.bottom_right_thin,
+	}
 end
 
 -- Numbers
