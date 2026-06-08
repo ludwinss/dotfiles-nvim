@@ -392,10 +392,8 @@ return {
 				require("plugins.languages.flutter-tools-nvim")
 			end,
 		},
-	},
-	{
-		"coder/claudecode.nvim",
-		dependencies = { "folke/snacks.nvim" },
-		config = true,
+		{
+			"rhart92/codex.nvim",
+		},
 	},
 }

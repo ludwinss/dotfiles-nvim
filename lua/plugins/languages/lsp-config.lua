@@ -18,7 +18,30 @@ vim.lsp.config("*", {
 
 local omnisharp_bin = vim.fs.joinpath(mason_bin, "OmniSharp")
 vim.lsp.config("omnisharp", {
-	cmd = { omnisharp_bin, "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
+	cmd = {
+		omnisharp_bin,
+		"-z",
+		"--hostPID",
+		tostring(vim.fn.getpid()),
+		"DotNet:enablePackageRestore=false",
+		"--encoding",
+		"utf-8",
+		"--languageserver",
+	},
+	init_options = {},
+	capabilities = vim.tbl_deep_extend("force", capabilities, {
+		workspace = {
+			workspaceFolders = false,
+		},
+	}),
+	settings = {
+		FormattingOptions = {
+			EnableEditorConfigSupport = true,
+		},
+		Sdk = {
+			IncludePrereleases = true,
+		},
+	},
 })
 
 vim.lsp.config("eslint", {
