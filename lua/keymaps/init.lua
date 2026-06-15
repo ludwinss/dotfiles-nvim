@@ -747,55 +747,6 @@ function M.testing()
 	)
 end
 
-local function get_visual_selection()
-	local ok, lines = pcall(vim.fn.getregion, vim.fn.getpos("'<"), vim.fn.getpos("'>"), {
-		type = vim.fn.visualmode(),
-	})
-	if ok and type(lines) == "table" then
-		return table.concat(lines, "\n")
-	end
-
-	local start_line = vim.fn.line("'<")
-	local end_line = vim.fn.line("'>")
-	local start_col = vim.fn.col("'<")
-	local end_col = vim.fn.col("'>")
-
-	if start_line > end_line then
-		start_line, end_line = end_line, start_line
-		start_col, end_col = end_col, start_col
-	end
-
-	lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
-	if #lines == 0 then
-		return ""
-	end
-
-	lines[1] = lines[1]:sub(start_col)
-	lines[#lines] = lines[#lines]:sub(1, end_col)
-	return table.concat(lines, "\n")
-end
-
-local function send_selection_to_codex()
-	local selection = get_visual_selection()
-	if selection == "" then
-		vim.notify("No hay selección para enviar a Codex", vim.log.levels.WARN)
-		return
-	end
-
-	local codex = require("codex")
-	local ok_state, state = pcall(require, "codex.state")
-
-	codex.open()
-	vim.defer_fn(function()
-		if not ok_state or type(state.job) ~= "number" then
-			vim.notify("Codex no tiene un terminal activo", vim.log.levels.WARN)
-			return
-		end
-
-		vim.fn.chansend(state.job, "\027[200~" .. selection .. "\027[201~\n")
-	end, 100)
-end
-
 function M.claude()
 	-- Claude Code
 	keymap(n, "<leader>a", "<nop>", { desc = "AI/Claude Code" })
