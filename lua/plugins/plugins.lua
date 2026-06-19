@@ -304,11 +304,9 @@ return {
 	-- 	event = "VeryLazy",
 	-- },
 	{
-		url = "https://codeberg.org/andyg/leap.nvim",
-		dependencies = "tpope/vim-repeat",
-		config = function()
-			require("plugins.ui.leap-nvim")
-		end,
+		"folke/flash.nvim",
+		event = "VeryLazy",
+		opts = {},
 	},
 	{
 		"kawre/leetcode.nvim",
