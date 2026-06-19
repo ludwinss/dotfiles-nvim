@@ -82,14 +82,60 @@ function M.editing()
 	keymap(i, "<Esc>", "<Esc>`^", default_opts)
 	keymap(v, "<Esc>", "v", default_opts)
 
-	keymap(n, "s", function()
-		require("leap").leap({})
-	end, vim.tbl_extend("force", default_opts, { desc = "Saltar hacia adelante" }))
+	keymap(
+		{ "n", "x", "o" },
+		"s",
+		function()
+			require("flash").jump()
+		end,
+		vim.tbl_extend("force", default_opts, {
+			desc = "Flash",
+		})
+	)
 
-	keymap(n, "gs", function()
-		require("leap").leap({ backward = true })
-	end, vim.tbl_extend("force", default_opts, { desc = "Saltar hacia atrás" }))
-	keymap(n, "<leader>m", "<cmd>RenderMarkdown toggle<CR>", { desc = "Previsualizar markdown" })
+	keymap(
+		{ "n", "x", "o" },
+		"S",
+		function()
+			require("flash").treesitter()
+		end,
+		vim.tbl_extend("force", default_opts, {
+			desc = "Flash Treesitter",
+		})
+	)
+
+	keymap(
+		"o",
+		"r",
+		function()
+			require("flash").remote()
+		end,
+		vim.tbl_extend("force", default_opts, {
+			desc = "Remote Flash",
+		})
+	)
+
+	keymap(
+		{ "o", "x" },
+		"R",
+		function()
+			require("flash").treesitter_search()
+		end,
+		vim.tbl_extend("force", default_opts, {
+			desc = "Treesitter Search",
+		})
+	)
+
+	keymap(
+		"c",
+		"<C-s>",
+		function()
+			require("flash").toggle()
+		end,
+		vim.tbl_extend("force", default_opts, {
+			desc = "Toggle Flash Search",
+		})
+	)
 
 	keymap(v, "<C-j>", function()
 		require("keymaps.utils").select_current_function()
@@ -688,7 +734,22 @@ function M.noice()
 end
 
 function M.terminal()
-	keymap(n, "tt", "<cmd>ToggleTerm<CR>", vim.tbl_extend("force", default_opts, { desc = "Abrir terminal" }))
+	keymap(n, "tt", "<cmd>terminal<CR><cmd>startinsert<CR>", vim.tbl_extend("force", default_opts, { desc = "Abrir terminal" }))
+
+	keymap(t, "<Esc>", [[<C-\><C-n>]], vim.tbl_extend("force", default_opts, { desc = "Salir del modo terminal" }))
+	keymap(t, "<Esc><Esc>", [[<C-\><C-n><cmd>bd!<CR>]], vim.tbl_extend("force", default_opts, { desc = "Cerrar terminal" }))
+
+	vim.api.nvim_create_autocmd("TermOpen", {
+		group = vim.api.nvim_create_augroup("UserTerminalKeymaps", { clear = true }),
+		callback = function(args)
+			vim.keymap.set("n", "<Esc><Esc>", "<cmd>bd!<CR>", {
+				buffer = args.buf,
+				noremap = true,
+				silent = true,
+				desc = "Cerrar terminal",
+			})
+		end,
+	})
 end
 
 function M.testing()
