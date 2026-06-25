@@ -45,6 +45,50 @@ function M.delete_buffer()
 	vim.cmd([[:bp | bdelete #]])
 end
 
+function M.close_terminal_buffer()
+	local term_buf = vim.api.nvim_get_current_buf()
+	local term_win = vim.api.nvim_get_current_win()
+
+	if vim.bo[term_buf].buftype ~= "terminal" then
+		vim.cmd("bd!")
+		return
+	end
+
+	local replacement = vim.fn.bufnr("#")
+	if replacement == term_buf or replacement < 1 or not vim.api.nvim_buf_is_valid(replacement) then
+		replacement = nil
+	end
+
+	if replacement and vim.bo[replacement].buftype == "terminal" then
+		replacement = nil
+	end
+
+	if not replacement then
+		for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+			if
+				buf ~= term_buf
+				and vim.api.nvim_buf_is_loaded(buf)
+				and vim.bo[buf].buflisted
+				and vim.bo[buf].buftype == ""
+			then
+				replacement = buf
+				break
+			end
+		end
+	end
+
+	if replacement then
+		vim.api.nvim_win_set_buf(term_win, replacement)
+	else
+		replacement = vim.api.nvim_create_buf(true, false)
+		vim.api.nvim_win_set_buf(term_win, replacement)
+	end
+
+	if vim.api.nvim_buf_is_valid(term_buf) then
+		vim.api.nvim_buf_delete(term_buf, { force = true })
+	end
+end
+
 function M.toggle_oil()
 	local U = require("utils.nvim")
 
@@ -89,8 +133,11 @@ function M.toggle_term(term)
 	local opts = { buffer = term.bufnr, noremap = true, silent = true, nowait = true }
 
 	vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], opts)
-	vim.keymap.set("t", "<Esc><Esc>", [[<C-\><C-n>:bd!<CR>]], opts)
-	vim.keymap.set("n", "<Esc><Esc>", "<cmd>bd!<CR>", opts)
+	vim.keymap.set("t", "<Esc><Esc>", function()
+		vim.cmd("stopinsert")
+		M.close_terminal_buffer()
+	end, opts)
+	vim.keymap.set("n", "<Esc><Esc>", M.close_terminal_buffer, opts)
 end
 
 local function is_summary_open()
