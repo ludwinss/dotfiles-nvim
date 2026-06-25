@@ -737,12 +737,15 @@ function M.terminal()
 	keymap(n, "tt", "<cmd>terminal<CR><cmd>startinsert<CR>", vim.tbl_extend("force", default_opts, { desc = "Abrir terminal" }))
 
 	keymap(t, "<Esc>", [[<C-\><C-n>]], vim.tbl_extend("force", default_opts, { desc = "Salir del modo terminal" }))
-	keymap(t, "<Esc><Esc>", [[<C-\><C-n><cmd>bd!<CR>]], vim.tbl_extend("force", default_opts, { desc = "Cerrar terminal" }))
+	keymap(t, "<Esc><Esc>", function()
+		vim.cmd("stopinsert")
+		require("keymaps.utils").close_terminal_buffer()
+	end, vim.tbl_extend("force", default_opts, { desc = "Cerrar terminal" }))
 
 	vim.api.nvim_create_autocmd("TermOpen", {
 		group = vim.api.nvim_create_augroup("UserTerminalKeymaps", { clear = true }),
 		callback = function(args)
-			vim.keymap.set("n", "<Esc><Esc>", "<cmd>bd!<CR>", {
+			vim.keymap.set("n", "<Esc><Esc>", require("keymaps.utils").close_terminal_buffer, {
 				buffer = args.buf,
 				noremap = true,
 				silent = true,
