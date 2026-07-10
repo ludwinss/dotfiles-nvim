@@ -137,6 +137,8 @@ function M.editing()
 		})
 	)
 
+	keymap(n, "<leader>m", "<cmd>RenderMarkdown toggle<CR>", { desc = "Previsualizar markdown" })
+
 	keymap(v, "<C-j>", function()
 		require("keymaps.utils").select_current_function()
 	end, vim.tbl_extend("force", default_opts, { desc = "Seleccionar método" }))
@@ -734,7 +736,12 @@ function M.noice()
 end
 
 function M.terminal()
-	keymap(n, "tt", "<cmd>terminal<CR><cmd>startinsert<CR>", vim.tbl_extend("force", default_opts, { desc = "Abrir terminal" }))
+	keymap(
+		n,
+		"tt",
+		"<cmd>terminal<CR><cmd>startinsert<CR>",
+		vim.tbl_extend("force", default_opts, { desc = "Abrir terminal" })
+	)
 
 	keymap(t, "<Esc>", [[<C-\><C-n>]], vim.tbl_extend("force", default_opts, { desc = "Salir del modo terminal" }))
 	keymap(t, "<Esc><Esc>", function()
