@@ -24,7 +24,7 @@ require("nvim-treesitter.configs").setup({
 		"make",
 	},
 
-	ignore_install = {},
+	ignore_install = { "latex" },
 
 	sync_install = false,
 	auto_install = true,
