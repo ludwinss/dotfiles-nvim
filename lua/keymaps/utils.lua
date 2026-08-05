@@ -41,6 +41,103 @@ function M.toggle_diffview()
 	end
 end
 
+function M.file_history()
+	if vim.fn.expand("%:p") == "" then
+		vim.notify("El buffer actual no tiene archivo", vim.log.levels.WARN)
+		return
+	end
+
+	local previewers = require("telescope.previewers")
+	local putils = require("telescope.previewers.utils")
+	local action_state = require("telescope.actions.state")
+
+	local function key(entry)
+		return "gfhdiff:" .. entry.value .. ":" .. entry.path
+	end
+
+	local diff_previewer = previewers.new_buffer_previewer({
+		title = "Cambios de este commit",
+		get_buffer_by_name = function(_, entry)
+			return key(entry)
+		end,
+		define_preview = function(self, entry, _)
+			if self.state.bufname == key(entry) then
+				return
+			end
+			local out = vim.fn.systemlist({
+				"git",
+				"--no-pager",
+				"show",
+				"--no-color",
+				"--stat",
+				"--patch",
+				"--format=commit %H%nAutor:  %an <%ae>%nFecha:  %ad%n%n    %s%n",
+				"--date=format:%Y-%m-%d %H:%M",
+				entry.value,
+				"--",
+				entry.path,
+			})
+			if vim.v.shell_error ~= 0 then
+				out = { "No se pudo obtener el diff de " .. entry.value }
+			end
+			vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, out)
+			putils.highlighter(self.state.bufnr, "diff")
+		end,
+	})
+
+	local function yank_hash(full)
+		return function()
+			local entry = action_state.get_selected_entry()
+			if not entry then
+				return
+			end
+			local hash = full and entry.value or entry.value:sub(1, 7)
+			vim.fn.setreg("+", hash)
+			vim.fn.setreg('"', hash)
+			vim.notify("Hash copiado: " .. hash, vim.log.levels.INFO)
+		end
+	end
+
+	local EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+
+	local function diff_range(hash)
+		vim.fn.system({ "git", "rev-parse", "--verify", "--quiet", hash .. "^" })
+		if vim.v.shell_error == 0 then
+			return hash .. "^.." .. hash
+		end
+		return EMPTY_TREE .. ".." .. hash
+	end
+
+	local function open_diffview(prompt_bufnr, whole_commit)
+		return function()
+			local entry = action_state.get_selected_entry()
+			if not entry then
+				return
+			end
+			require("telescope.actions").close(prompt_bufnr)
+			local cmd = "DiffviewOpen " .. diff_range(entry.value)
+			if not whole_commit then
+				cmd = cmd .. " -- " .. vim.fn.fnameescape(entry.path)
+			end
+			vim.cmd(cmd)
+		end
+	end
+
+	require("telescope").extensions.git_file_history.git_file_history({
+		previewer = diff_previewer,
+		attach_mappings = function(prompt_bufnr, map)
+			require("telescope.actions.set").select:replace(open_diffview(prompt_bufnr, false))
+			map("i", "<C-a>", open_diffview(prompt_bufnr, true))
+			map("n", "<C-a>", open_diffview(prompt_bufnr, true))
+			map("i", "<C-y>", yank_hash(false))
+			map("n", "<C-y>", yank_hash(false))
+			map("i", "<C-S-y>", yank_hash(true))
+			map("n", "<C-S-y>", yank_hash(true))
+			return true
+		end,
+	})
+end
+
 function M.delete_buffer()
 	vim.cmd([[:bp | bdelete #]])
 end
