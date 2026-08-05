@@ -209,6 +209,17 @@ function M.git()
 
 	keymap(
 		n,
+		"<leader>gh",
+		function()
+			require("keymaps.utils").file_history()
+		end,
+		vim.tbl_extend("force", default_opts, {
+			desc = "Historial de cambios del archivo actual",
+		})
+	)
+
+	keymap(
+		n,
 		"<leader>gg",
 		function()
 			require("keymaps.utils").toggle_neogit()
