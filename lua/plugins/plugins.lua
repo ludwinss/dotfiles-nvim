@@ -159,6 +159,8 @@ return {
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-lua/popup.nvim",
+			"tpope/vim-fugitive",
+			"isak102/telescope-git-file-history.nvim",
 		},
 		cmd = "Telescope",
 		config = function()
