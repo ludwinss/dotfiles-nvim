@@ -172,3 +172,4 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 TS.load_extension("ui-select")
+TS.load_extension("git_file_history")
