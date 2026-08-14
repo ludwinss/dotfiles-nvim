@@ -5,6 +5,7 @@ require("nvim-treesitter.configs").setup({
 		"dockerfile",
 		"elixir",
 		"go",
+		"angular",
 		"html",
 		"javascript",
 		"json",

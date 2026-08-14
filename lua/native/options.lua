@@ -70,4 +70,10 @@ vim.opt.pumheight = 10
 
 vim.opt.background = "dark"
 
+vim.filetype.add({
+	pattern = {
+		[".*%.component%.html"] = "htmlangular",
+	},
+})
+
 vim.cmd("filetype plugin indent on")

@@ -98,4 +98,48 @@ vim.lsp.config("ts_ls", {
 	},
 })
 
+local ngserver_bin = vim.fs.joinpath(mason_bin, "ngserver")
+
+local function angular_probe_locations(root_dir)
+	local probes = {}
+
+	local project_modules = vim.fs.joinpath(root_dir, "node_modules")
+	if vim.uv.fs_stat(project_modules) then
+		table.insert(probes, project_modules)
+	end
+
+	local exe = (vim.fn.executable(ngserver_bin) == 1) and ngserver_bin or vim.fn.exepath("ngserver")
+	if exe ~= "" then
+		local real = vim.uv.fs_realpath(exe) or exe
+		local bundled = vim.fs.normalize(vim.fs.joinpath(vim.fs.dirname(real), "../../.."))
+		if vim.uv.fs_stat(bundled) then
+			table.insert(probes, bundled)
+		end
+	end
+
+	return exe, probes
+end
+
+vim.lsp.config("angularls", {
+	cmd = function(dispatchers, config)
+		local root_dir = (config and config.root_dir) or vim.fn.getcwd()
+		local exe, probes = angular_probe_locations(root_dir)
+
+		local ng_probes = vim.tbl_map(function(p)
+			return vim.fs.joinpath(p, "@angular/language-server/node_modules")
+		end, probes)
+
+		return vim.lsp.rpc.start({
+			exe,
+			"--stdio",
+			"--tsProbeLocations",
+			table.concat(probes, ","),
+			"--ngProbeLocations",
+			table.concat(ng_probes, ","),
+		}, dispatchers)
+	end,
+	filetypes = { "typescript", "html", "htmlangular" },
+	root_markers = { "angular.json", "nx.json", "project.json" },
+})
+
 vim.lsp.enable(mason.servers)
