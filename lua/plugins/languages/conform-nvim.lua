@@ -30,6 +30,9 @@ require("conform").setup({
 		json = { "prettierd", "fixjson", stop_after_first = true },
 		markdown = { "prettierd" },
 		html = { "prettierd", "prettier", stop_after_first = true },
+		htmlangular = { "prettierd", "prettier", stop_after_first = true },
+		scss = { "prettierd", "prettier", stop_after_first = true },
+		css = { "prettierd", "prettier", stop_after_first = true },
 
 		csharp = { "csharpier" },
 		cs = { "csharpier" },
