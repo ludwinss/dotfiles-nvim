@@ -42,6 +42,10 @@ function M.apply(opts)
 	local constant = highlight("Constant")
 	local pmenu_sel = highlight("PmenuSel")
 	local line_nr = highlight("LineNr")
+	local keyword = highlight("Keyword")
+	local special = highlight("Special")
+	local error_hl = highlight("DiagnosticError")
+	local func_hl = highlight("Function")
 
 	local bg = pick(opts.bg, normal.bg, normal_float.bg, vim.o.background == "light" and "#f6f7fb" or "#181b24")
 	local float_bg = pick(opts.float_bg, normal_float.bg, bg)
@@ -51,6 +55,16 @@ function M.apply(opts)
 	local muted = pick(opts.muted, comment.fg, line_nr.fg, "#928374")
 	local select_bg = pick(opts.select_bg, pmenu_sel.bg, float_bg)
 	local title_bg = pick(opts.title_bg, bg, float_bg)
+
+	local label_bg = opts.bg or normal.bg or normal_float.bg or (vim.o.background == "light" and "#f6f7fb" or "#181b24")
+
+	local label = opts.label or error_hl.fg or keyword.fg or special.fg or func_hl.fg
+	if not label or label == accent or label == accent_alt then
+		label = special.fg or func_hl.fg or error_hl.fg or accent_alt
+	end
+	if not label or label == accent or label == accent_alt then
+		label = vim.o.background == "light" and "#c4006a" or "#ff007c"
+	end
 
 	U.merge_highlights_table({
 		CmpItemSel = { link = "PmenuSel" },
@@ -82,9 +96,19 @@ function M.apply(opts)
 		WinBar = { fg = muted },
 		WinBarNC = { fg = muted },
 		LeapBackdrop = {},
-		LeapLabelPrimary = { fg = bg, bg = accent, bold = true },
-		LeapLabelSecondary = { fg = bg, bg = accent_alt, bold = true },
+		LeapLabelPrimary = { fg = label_bg, bg = label, bold = true },
+		LeapLabelSecondary = { fg = label_bg, bg = accent_alt, bold = true },
 	})
+
+	for group, hl in pairs({
+		FlashBackdrop = { fg = muted },
+		FlashMatch = { fg = label_bg, bg = accent, bold = true },
+		FlashCurrent = { fg = label_bg, bg = accent_alt, bold = true },
+		FlashLabel = { fg = label_bg, bg = label, bold = true },
+		FlashPromptIcon = { fg = label },
+	}) do
+		vim.api.nvim_set_hl(0, group, hl)
+	end
 
 	U.refresh_statusline()
 end

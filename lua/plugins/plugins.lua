@@ -308,7 +308,15 @@ return {
 	{
 		"folke/flash.nvim",
 		event = "VeryLazy",
-		opts = {},
+		opts = {
+			label = {
+				uppercase = false,
+				style = "overlay",
+			},
+			highlight = {
+				backdrop = true,
+			},
+		},
 	},
 	{
 		"kawre/leetcode.nvim",
