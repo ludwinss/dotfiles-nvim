@@ -142,4 +142,31 @@ vim.lsp.config("angularls", {
 	root_markers = { "angular.json", "nx.json", "project.json" },
 })
 
+local function rust_analyzer_cmd()
+	local rustup_ra = vim.fs.joinpath(vim.env.HOME, ".cargo", "bin", "rust-analyzer")
+	if vim.fn.executable(rustup_ra) == 1 then
+		return { rustup_ra }
+	end
+	return { vim.fs.joinpath(mason_bin, "rust-analyzer") }
+end
+
+vim.lsp.config("rust_analyzer", {
+	cmd = rust_analyzer_cmd(),
+	root_dir = function(bufnr, on_dir)
+		local fname = vim.api.nvim_buf_get_name(bufnr)
+		if fname == "" then
+			return
+		end
+		on_dir(vim.fs.root(fname, { "Cargo.toml", "rust-project.json" }) or vim.fs.dirname(fname))
+	end,
+	settings = {
+		["rust-analyzer"] = {
+			cargo = { allFeatures = true },
+			procMacro = { enable = true },
+			checkOnSave = true,
+			check = { command = "clippy" },
+		},
+	},
+})
+
 vim.lsp.enable(mason.servers)
