@@ -18,7 +18,6 @@ function M.init()
 	M.oil()
 	M.telescope()
 	M.zenmode()
-	M.completion()
 	M.terminal()
 	M.testing()
 	M.claude()
@@ -567,49 +566,6 @@ function M.telescope()
 			desc = "Buscar implementaciones",
 		})
 	)
-end
-
--- TODO: dont touch
-function M.completion()
-	local cmp = require("cmp")
-	local luasnip = require("luasnip")
-	cmp.setup({
-		mapping = cmp.mapping.preset.insert({
-			["<C-u>"] = cmp.mapping.scroll_docs(-4),
-			["<C-d>"] = cmp.mapping.scroll_docs(4),
-			["<C-Space>"] = cmp.mapping.complete(),
-			["<CR>"] = cmp.mapping(function(fallback)
-				if cmp.visible() then
-					local entry = cmp.get_selected_entry()
-					if not entry then
-						fallback()
-					else
-						cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
-					end
-				else
-					fallback()
-				end
-			end, { "i", "s" }),
-			["<C-j>"] = cmp.mapping(function(fallback)
-				if cmp.visible() then
-					cmp.select_next_item()
-				elseif luasnip.expand_or_locally_jumpable() then
-					luasnip.expand_or_jump()
-				else
-					fallback()
-				end
-			end, { "i", "s" }),
-			["<C-k>"] = cmp.mapping(function(fallback)
-				if cmp.visible() then
-					cmp.select_prev_item()
-				elseif luasnip.jumpable(-1) then
-					luasnip.jump(-1)
-				else
-					fallback()
-				end
-			end, { "i", "s" }),
-		}),
-	})
 end
 
 function M.debugger()
