@@ -7,48 +7,27 @@ require("luasnip.loaders.from_vscode").lazy_load()
 
 local function accept_ai()
 	if not vim.api.nvim_get_mode().mode:match("^i") then
-		return false
+		return nil
 	end
 
 	local ok, virtual_text = pcall(require, "codeium.virtual_text")
 	if not ok or not virtual_text.get_current_completion_item() then
-		return false
+		return nil
 	end
 
 	local keys = virtual_text.accept()
 	if not keys or keys == "" then
-		return false
+		return nil
 	end
 
-	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), "n", false)
-	return true
+	return keys
 end
 
--- Contrato minimo para completar en modo Insert:
---   Enter: aceptar CMP.
---   Tab/S-Tab: aceptar IA o moverse por un snippet.
---   C-j/C-k: navegar CMP. C-Space: abrir CMP manualmente.
 local insert_mapping = {
 	["<C-Space>"] = CMP.mapping.complete(),
 	["<CR>"] = CMP.mapping(function(fallback)
 		if CMP.visible() then
 			CMP.confirm({ behavior = CMP.ConfirmBehavior.Replace, select = true })
-		else
-			fallback()
-		end
-	end, { "i", "s" }),
-	["<Tab>"] = CMP.mapping(function(fallback)
-		if accept_ai() then
-			return
-		elseif luasnip.expand_or_locally_jumpable() then
-			luasnip.expand_or_jump()
-		else
-			fallback()
-		end
-	end, { "i", "s" }),
-	["<S-Tab>"] = CMP.mapping(function(fallback)
-		if luasnip.jumpable(-1) then
-			luasnip.jump(-1)
 		else
 			fallback()
 		end
@@ -72,6 +51,31 @@ CMP.setup({
 	snippet = snippet,
 	mapping = insert_mapping,
 })
+
+vim.keymap.set({ "i", "s" }, "<Tab>", function()
+	local ai_keys = accept_ai()
+	if ai_keys then
+		return ai_keys
+	end
+
+	if luasnip.expand_or_locally_jumpable() then
+		vim.schedule(luasnip.expand_or_jump)
+		return ""
+	end
+
+	return "<Tab>"
+end, { expr = true, silent = true, desc = "Aceptar IA o avanzar snippet" })
+
+vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
+	if luasnip.jumpable(-1) then
+		vim.schedule(function()
+			luasnip.jump(-1)
+		end)
+		return ""
+	end
+
+	return "<S-Tab>"
+end, { expr = true, silent = true, desc = "Retroceder snippet" })
 
 local tex = {
 	sources = {
