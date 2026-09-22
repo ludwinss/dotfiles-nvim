@@ -2,14 +2,8 @@ require("codeium").setup({
 	virtual_text = {
 		enabled = true,
 		idle_delay = 75,
-		key_bindings = {
-			accept = "<Tab>",
-			next = "<M-]>",
-			prev = "<M-[>",
-			clear = "<C-]>",
-			accept_word = "<C-j>",
-			accept_line = "<C-k>",
-		},
+		-- Los atajos se resuelven junto con CMP en completitions.lua.
+		map_keys = false,
 	},
 
 	enable_cmp_source = false,
