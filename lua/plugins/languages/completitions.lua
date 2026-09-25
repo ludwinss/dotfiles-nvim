@@ -25,6 +25,8 @@ end
 
 local insert_mapping = {
 	["<C-Space>"] = CMP.mapping.complete(),
+	["<C-d>"] = CMP.mapping.scroll_docs(4),
+	["<C-u>"] = CMP.mapping.scroll_docs(-4),
 	["<CR>"] = CMP.mapping(function(fallback)
 		if CMP.visible() then
 			CMP.confirm({ behavior = CMP.ConfirmBehavior.Replace, select = true })
@@ -95,9 +97,38 @@ local cmdline_window = {
 		side_padding = 0,
 	}),
 }
+
+local function cmdline_mapping()
+	return CMP.mapping.preset.cmdline({
+		["<Tab>"] = CMP.mapping(function() end, { "c" }),
+		["<S-Tab>"] = CMP.mapping(function() end, { "c" }),
+		["<CR>"] = CMP.mapping(function(fallback)
+			if CMP.visible() and CMP.get_selected_entry() then
+				CMP.confirm({ select = false })
+			else
+				fallback()
+			end
+		end, { "c" }),
+		["<C-j>"] = CMP.mapping(function()
+			if CMP.visible() then
+				CMP.select_next_item({ behavior = CMP.SelectBehavior.Select })
+			else
+				CMP.complete()
+			end
+		end, { "c" }),
+		["<C-k>"] = CMP.mapping(function()
+			if CMP.visible() then
+				CMP.select_prev_item({ behavior = CMP.SelectBehavior.Select })
+			else
+				CMP.complete()
+			end
+		end, { "c" }),
+	})
+end
+
 local cmdline = {
 	window = cmdline_window,
-	mapping = CMP.mapping.preset.cmdline(),
+	mapping = cmdline_mapping(),
 	sources = CMP.config.sources({
 		{ name = "cmdline" },
 		{ name = "path" },
@@ -117,7 +148,7 @@ local search_window = {
 
 local search = {
 	window = search_window,
-	mapping = CMP.mapping.preset.cmdline(),
+	mapping = cmdline_mapping(),
 	sources = CMP.config.sources({ { name = "buffer" } }),
 	completion = {
 		autocomplete = false,
