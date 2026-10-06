@@ -201,13 +201,6 @@ function M.toggle_oil()
 	end
 end
 
-function M.toggle_completion()
-	local ok, codeium = pcall(require, "codeium")
-	if ok and codeium.toggle then
-		codeium.toggle()
-	end
-end
-
 function M.select_current_function()
 	local ok, ts_select = pcall(require, "nvim-treesitter.textobjects.select")
 	if not ok then
