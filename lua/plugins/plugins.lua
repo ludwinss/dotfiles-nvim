@@ -266,17 +266,6 @@ return {
 			require("plugins.themes.accent")
 		end,
 	},
-	-- OTHER.
-	{
-		"Exafunction/windsurf.nvim",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"hrsh7th/nvim-cmp",
-		},
-		config = function()
-			require("plugins.languages.windsfurd-nvim")
-		end,
-	},
 	{
 		"mfussenegger/nvim-dap",
 		dependencies = {
