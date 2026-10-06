@@ -4,24 +4,9 @@ local U = require("utils")
 
 require("plugins.ui.nvim-cmp")
 require("luasnip.loaders.from_vscode").lazy_load()
-
-local function accept_ai()
-	if not vim.api.nvim_get_mode().mode:match("^i") then
-		return nil
-	end
-
-	local ok, virtual_text = pcall(require, "codeium.virtual_text")
-	if not ok or not virtual_text.get_current_completion_item() then
-		return nil
-	end
-
-	local keys = virtual_text.accept()
-	if not keys or keys == "" then
-		return nil
-	end
-
-	return keys
-end
+require("luasnip.loaders.from_lua").lazy_load({
+	paths = vim.fn.stdpath("config") .. "/lua/snippets",
+})
 
 local insert_mapping = {
 	["<C-Space>"] = CMP.mapping.complete(),
@@ -55,18 +40,13 @@ CMP.setup({
 })
 
 vim.keymap.set({ "i", "s" }, "<Tab>", function()
-	local ai_keys = accept_ai()
-	if ai_keys then
-		return ai_keys
-	end
-
 	if luasnip.expand_or_locally_jumpable() then
 		vim.schedule(luasnip.expand_or_jump)
 		return ""
 	end
 
 	return "<Tab>"
-end, { expr = true, silent = true, desc = "Aceptar IA o avanzar snippet" })
+end, { expr = true, silent = true, desc = "Expandir o avanzar snippet" })
 
 vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
 	if luasnip.jumpable(-1) then
@@ -155,13 +135,3 @@ local search = {
 	},
 }
 CMP.setup.cmdline({ "/", "?" }, search)
-
-vim.api.nvim_create_autocmd("User", {
-	pattern = "CmpMenuOpened",
-	callback = function()
-		local ok, virtual_text = pcall(require, "codeium.virtual_text")
-		if ok then
-			virtual_text.clear()
-		end
-	end,
-})
