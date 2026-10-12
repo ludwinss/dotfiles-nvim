@@ -39,25 +39,37 @@ CMP.setup({
 	mapping = insert_mapping,
 })
 
-vim.keymap.set({ "i", "s" }, "<Tab>", function()
-	if luasnip.expand_or_locally_jumpable() then
-		vim.schedule(luasnip.expand_or_jump)
-		return ""
+local function accept_ai()
+	local ok, suggestion = pcall(require, "supermaven-nvim.completion_preview")
+	if not ok or not suggestion.has_suggestion() then
+		return false
 	end
 
-	return "<Tab>"
-end, { expr = true, silent = true, desc = "Expandir o avanzar snippet" })
+	suggestion.on_accept_suggestion()
+	return true
+end
+
+vim.keymap.set({ "i", "s" }, "<Tab>", function()
+	if luasnip.expand_or_locally_jumpable() then
+		luasnip.expand_or_jump()
+		return
+	end
+
+	if accept_ai() then
+		return
+	end
+
+	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n", false)
+end, { silent = true, desc = "Aceptar IA o avanzar snippet" })
 
 vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
 	if luasnip.jumpable(-1) then
-		vim.schedule(function()
-			luasnip.jump(-1)
-		end)
-		return ""
+		luasnip.jump(-1)
+		return
 	end
 
-	return "<S-Tab>"
-end, { expr = true, silent = true, desc = "Retroceder snippet" })
+	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<S-Tab>", true, false, true), "n", false)
+end, { silent = true, desc = "Retroceder snippet" })
 
 local tex = {
 	sources = {
@@ -135,3 +147,14 @@ local search = {
 	},
 }
 CMP.setup.cmdline({ "/", "?" }, search)
+
+vim.api.nvim_create_autocmd("User", {
+	pattern = "CmpMenuOpened",
+	callback = function()
+		local ok, suggestion = pcall(require, "supermaven-nvim.completion_preview")
+		if ok then
+			suggestion.on_dispose_inlay()
+		end
+	end,
+	desc = "Ocultar Supermaven mientras CMP está abierto",
+})

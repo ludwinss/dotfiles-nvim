@@ -79,6 +79,12 @@ return {
 		},
 	},
 	{
+		"supermaven-inc/supermaven-nvim",
+		config = function()
+			require("plugins.languages.supermaven")
+		end,
+	},
+	{
 		"nvim-treesitter/nvim-treesitter",
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter-textobjects",
