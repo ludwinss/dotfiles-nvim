@@ -387,6 +387,13 @@ function M.setup()
 				},
 			},
 			lualine_y = {
+					build_status_component({
+						icon = " ",
+						enabled = function()
+							return lsp_native.is_copilot_active and lsp_native.is_copilot_active()
+						end,
+						colors = status_colors,
+					}),
 				build_status_component({
 					icon = " ",
 					enabled = function()
