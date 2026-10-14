@@ -60,12 +60,11 @@ return {
 	},
 	{
 		"hrsh7th/nvim-cmp",
-		event = "VeryLazy",
+		lazy = false,
 		config = function()
 			require("plugins.languages.completitions")
 		end,
 		dependencies = {
-			"hrsh7th/cmp-omni",
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",

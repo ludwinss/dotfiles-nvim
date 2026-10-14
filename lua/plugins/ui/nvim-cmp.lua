@@ -51,11 +51,11 @@ CMP.setup({
 	sorting = {
 		priority_weight = 2,
 		comparators = {
-			compare.sort_text,
+			compare.exact,
 			compare.score,
 			compare.recently_used,
 			compare.locality,
-			compare.exact,
+			compare.sort_text,
 			compare.kind,
 			compare.length,
 			compare.order,
