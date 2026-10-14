@@ -202,10 +202,7 @@ function M.toggle_oil()
 end
 
 function M.toggle_completion()
-	local ok, supermaven = pcall(require, "supermaven-nvim.api")
-	if ok then
-		supermaven.toggle()
-	end
+	require("native.lsp-native").toggle_windsurf()
 end
 
 function M.select_current_function()

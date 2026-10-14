@@ -79,9 +79,13 @@ return {
 		},
 	},
 	{
-		"supermaven-inc/supermaven-nvim",
+		"Exafunction/windsurf.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"hrsh7th/nvim-cmp",
+		},
 		config = function()
-			require("plugins.languages.supermaven")
+			require("plugins.languages.windsurf")
 		end,
 	},
 	{
@@ -292,11 +296,11 @@ return {
 			require("tmux").setup()
 		end,
 	},
-	-- {
-	-- 	"vyfor/cord.nvim",
-	-- 	build = "./build || .\\build",
-	-- 	event = "VeryLazy",
-	-- },
+	{
+		"vyfor/cord.nvim",
+		build = "./build || .\\build",
+		event = "VeryLazy",
+	},
 	{
 		"folke/flash.nvim",
 		event = "VeryLazy",

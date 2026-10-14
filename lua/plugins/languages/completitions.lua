@@ -8,6 +8,24 @@ require("luasnip.loaders.from_lua").lazy_load({
 	paths = vim.fn.stdpath("config") .. "/lua/snippets",
 })
 
+local function accept_ai()
+	if not vim.api.nvim_get_mode().mode:match("^i") then
+		return nil
+	end
+
+	local ok, virtual_text = pcall(require, "codeium.virtual_text")
+	if not ok or not virtual_text.get_current_completion_item() then
+		return nil
+	end
+
+	local keys = virtual_text.accept()
+	if not keys or keys == "" then
+		return nil
+	end
+
+	return keys
+end
+
 local insert_mapping = {
 	["<C-Space>"] = CMP.mapping.complete(),
 	["<C-d>"] = CMP.mapping.scroll_docs(4),
@@ -39,37 +57,30 @@ CMP.setup({
 	mapping = insert_mapping,
 })
 
-local function accept_ai()
-	local ok, suggestion = pcall(require, "supermaven-nvim.completion_preview")
-	if not ok or not suggestion.has_suggestion() then
-		return false
-	end
-
-	suggestion.on_accept_suggestion()
-	return true
-end
-
 vim.keymap.set({ "i", "s" }, "<Tab>", function()
+	local ai_keys = accept_ai()
+	if ai_keys then
+		return ai_keys
+	end
+
 	if luasnip.expand_or_locally_jumpable() then
-		luasnip.expand_or_jump()
-		return
+		vim.schedule(luasnip.expand_or_jump)
+		return ""
 	end
 
-	if accept_ai() then
-		return
-	end
-
-	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n", false)
-end, { silent = true, desc = "Aceptar IA o avanzar snippet" })
+	return "<Tab>"
+end, { expr = true, silent = true, desc = "Aceptar IA o avanzar snippet" })
 
 vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
 	if luasnip.jumpable(-1) then
-		luasnip.jump(-1)
-		return
+		vim.schedule(function()
+			luasnip.jump(-1)
+		end)
+		return ""
 	end
 
-	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<S-Tab>", true, false, true), "n", false)
-end, { silent = true, desc = "Retroceder snippet" })
+	return "<S-Tab>"
+end, { expr = true, silent = true, desc = "Retroceder snippet" })
 
 local tex = {
 	sources = {
@@ -151,10 +162,10 @@ CMP.setup.cmdline({ "/", "?" }, search)
 vim.api.nvim_create_autocmd("User", {
 	pattern = "CmpMenuOpened",
 	callback = function()
-		local ok, suggestion = pcall(require, "supermaven-nvim.completion_preview")
+		local ok, virtual_text = pcall(require, "codeium.virtual_text")
 		if ok then
-			suggestion.on_dispose_inlay()
+			virtual_text.clear()
 		end
 	end,
-	desc = "Ocultar Supermaven mientras CMP está abierto",
+	desc = "Ocultar Windsurf mientras CMP está abierto",
 })
