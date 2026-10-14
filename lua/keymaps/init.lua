@@ -62,9 +62,8 @@ function M.native()
 	end, default_opts)
 
 	keymap(n, "<leader>c", function()
-		require("native.lsp-native").toggle_copilot()
-		default_opts = vim.tbl_extend("force", default_opts, { desc = "Act/Desc copilot" })
-	end, default_opts)
+		require("native.lsp-native").toggle_windsurf()
+	end, vim.tbl_extend("force", default_opts, { desc = "Act/Desc Windsurf" }))
 
 	keymap(
 		n,

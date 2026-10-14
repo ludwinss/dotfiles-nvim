@@ -390,7 +390,7 @@ function M.setup()
 					build_status_component({
 						icon = " ",
 						enabled = function()
-							return lsp_native.is_copilot_active and lsp_native.is_copilot_active()
+							return lsp_native.is_windsurf_active and lsp_native.is_windsurf_active()
 						end,
 						colors = status_colors,
 					}),
