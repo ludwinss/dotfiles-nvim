@@ -28,11 +28,13 @@ end
 
 local insert_mapping = {
 	["<C-Space>"] = CMP.mapping.complete(),
+	-- Algunas terminales envían Ctrl-Space como Ctrl-@ (NUL).
+	["<C-@>"] = CMP.mapping.complete(),
 	["<C-d>"] = CMP.mapping.scroll_docs(4),
 	["<C-u>"] = CMP.mapping.scroll_docs(-4),
 	["<CR>"] = CMP.mapping(function(fallback)
-		if CMP.visible() then
-			CMP.confirm({ behavior = CMP.ConfirmBehavior.Replace, select = true })
+		if CMP.visible() and CMP.get_selected_entry() then
+			CMP.confirm({ behavior = CMP.ConfirmBehavior.Replace, select = false })
 		else
 			fallback()
 		end
@@ -45,6 +47,7 @@ local sources = CMP.config.sources({
 	{ name = "nvim_lsp" },
 	{ name = "luasnip" },
 	{ name = "path" },
+	{ name = "buffer" },
 })
 local snippet = {
 	expand = function(args)
@@ -55,9 +58,17 @@ CMP.setup({
 	sources = sources,
 	snippet = snippet,
 	mapping = insert_mapping,
+	preselect = CMP.PreselectMode.None,
 })
 
 vim.keymap.set({ "i", "s" }, "<Tab>", function()
+	if CMP.visible() then
+		vim.schedule(function()
+			CMP.select_next_item({ behavior = CMP.SelectBehavior.Select })
+		end)
+		return ""
+	end
+
 	local ai_keys = accept_ai()
 	if ai_keys then
 		return ai_keys
@@ -72,6 +83,13 @@ vim.keymap.set({ "i", "s" }, "<Tab>", function()
 end, { expr = true, silent = true, desc = "Aceptar IA o avanzar snippet" })
 
 vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
+	if CMP.visible() then
+		vim.schedule(function()
+			CMP.select_prev_item({ behavior = CMP.SelectBehavior.Select })
+		end)
+		return ""
+	end
+
 	if luasnip.jumpable(-1) then
 		vim.schedule(function()
 			luasnip.jump(-1)
@@ -81,15 +99,6 @@ vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
 
 	return "<S-Tab>"
 end, { expr = true, silent = true, desc = "Retroceder snippet" })
-
-local tex = {
-	sources = {
-		{ name = "nvim_lsp" },
-		{ name = "luasnip" },
-		{ name = "latex_symbols" },
-	},
-}
-CMP.setup.filetype({ "tex", "latex" }, tex)
 
 local cmdline_window = {
 	completion = CMP.config.window.bordered({
@@ -103,8 +112,6 @@ local cmdline_window = {
 
 local function cmdline_mapping()
 	return CMP.mapping.preset.cmdline({
-		["<Tab>"] = CMP.mapping(function() end, { "c" }),
-		["<S-Tab>"] = CMP.mapping(function() end, { "c" }),
 		["<CR>"] = CMP.mapping(function(fallback)
 			if CMP.visible() and CMP.get_selected_entry() then
 				CMP.confirm({ select = false })
@@ -137,7 +144,7 @@ local cmdline = {
 		{ name = "path" },
 	}),
 }
-CMP.setup.cmdline({ ":", ":!" }, cmdline)
+CMP.setup.cmdline(":", cmdline)
 
 local search_window = {
 	completion = CMP.config.window.bordered({
