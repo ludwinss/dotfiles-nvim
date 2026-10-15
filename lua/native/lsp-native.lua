@@ -125,24 +125,4 @@ function M.toggle_format_enabled()
 	require("utils").refresh_statusline()
 end
 
-M.windsurf_enabled = true
-vim.g.disable_completion = not M.windsurf_enabled
-
-function M.is_windsurf_active()
-	return M.windsurf_enabled and not vim.g.disable_completion
-end
-
-function M.toggle_windsurf()
-	local ok, codeium = pcall(require, "codeium")
-	if not ok or not codeium.toggle then
-		return
-	end
-
-	codeium.toggle()
-	M.windsurf_enabled = not M.windsurf_enabled
-	vim.g.disable_completion = not M.windsurf_enabled
-
-	require("utils").refresh_statusline()
-end
-
 return M

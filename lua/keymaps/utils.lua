@@ -201,10 +201,6 @@ function M.toggle_oil()
 	end
 end
 
-function M.toggle_completion()
-	require("native.lsp-native").toggle_windsurf()
-end
-
 function M.select_current_function()
 	local ok, ts_select = pcall(require, "nvim-treesitter.textobjects.select")
 	if not ok then

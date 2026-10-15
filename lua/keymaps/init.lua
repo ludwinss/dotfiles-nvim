@@ -61,10 +61,6 @@ function M.native()
 		default_opts = vim.tbl_extend("force", default_opts, { desc = "Act/Desc formateo" })
 	end, default_opts)
 
-	keymap(n, "<leader>c", function()
-		require("native.lsp-native").toggle_windsurf()
-	end, vim.tbl_extend("force", default_opts, { desc = "Act/Desc Windsurf" }))
-
 	keymap(
 		n,
 		"gm",
