@@ -387,13 +387,6 @@ function M.setup()
 				},
 			},
 			lualine_y = {
-					build_status_component({
-						icon = " ",
-						enabled = function()
-							return lsp_native.is_windsurf_active and lsp_native.is_windsurf_active()
-						end,
-						colors = status_colors,
-					}),
 				build_status_component({
 					icon = " ",
 					enabled = function()
