@@ -95,34 +95,48 @@ function M.prev_diag()
 	})
 end
 
-function M.format_buffer(opts)
-	opts = opts or {}
-	if not opts.force and not M.is_format_active() then
-		return
-	end
-
-	local conform = require("conform")
-	local cursor_position = vim.api.nvim_win_get_cursor(0)
-
-	conform.format({
-		async = true,
-		lsp_fallback = false,
-	})
-
-	vim.api.nvim_win_set_cursor(0, cursor_position)
+-- Formateo manual: siempre corre, sin importar el toggle de autoformato.
+function M.format_buffer()
+	require("conform").format({ async = true, lsp_format = "never" })
 end
 
-M.format_enabled = true
-vim.g.disable_autoformat = not M.format_enabled
+if vim.g.disable_autoformat == nil then
+	vim.g.disable_autoformat = false
+end
 
 function M.is_format_active()
-	return M.format_enabled and not vim.g.disable_autoformat
+	return not vim.g.disable_autoformat
 end
 
 function M.toggle_format_enabled()
-	M.format_enabled = not M.format_enabled
-	vim.g.disable_autoformat = not M.format_enabled
+	vim.g.disable_autoformat = not vim.g.disable_autoformat
 	require("utils").refresh_statusline()
+	vim.notify("Autoformato al guardar " .. (M.is_format_active() and "activado" or "desactivado"))
+end
+
+-- El editorconfig nativo recorta espacios finales al guardar (trim_trailing_whitespace),
+-- incluso dentro de template strings. Solo se permite con el autoformato activo y si
+-- conform no tiene formateador para el buffer (prettier & co. ya lo hacen bien).
+local trim_group = vim.api.nvim_create_augroup("EditorconfigTrimWhitespace", { clear = true })
+require("editorconfig").properties.trim_trailing_whitespace = function(bufnr, val)
+	vim.api.nvim_clear_autocmds({ group = trim_group, buffer = bufnr })
+	if val ~= "true" then
+		return
+	end
+
+	vim.api.nvim_create_autocmd("BufWritePre", {
+		group = trim_group,
+		buffer = bufnr,
+		callback = function()
+			if vim.g.disable_autoformat or #require("conform").list_formatters(bufnr) > 0 then
+				return
+			end
+			local view = vim.fn.winsaveview()
+			vim.cmd("silent! undojoin")
+			vim.cmd("silent keepjumps keeppatterns %s/\\s\\+$//e")
+			vim.fn.winrestview(view)
+		end,
+	})
 end
 
 return M
