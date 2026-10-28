@@ -4,16 +4,23 @@ require("plugins.languages.ltex-nvim")
 
 local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
 
-local function on_attach(client, bufnr)
-	client.server_capabilities.documentFormattingProvider = false
-	client.server_capabilities.documentRangeFormattingProvider = false
-	vim.bo[bufnr].formatexpr = ""
-end
-
 vim.lsp.config("*", {
 	capabilities = capabilities,
-	on_attach = on_attach,
 	flags = { debounce_text_changes = 250 },
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+	group = vim.api.nvim_create_augroup("DisableLspFormatting", { clear = true }),
+	callback = function(args)
+		local client = vim.lsp.get_client_by_id(args.data.client_id)
+		if not client then
+			return
+		end
+
+		client.server_capabilities.documentFormattingProvider = false
+		client.server_capabilities.documentRangeFormattingProvider = false
+		vim.bo[args.buf].formatexpr = ""
+	end,
 })
 
 local omnisharp_bin = vim.fs.joinpath(mason_bin, "OmniSharp")
@@ -140,6 +147,7 @@ vim.lsp.config("angularls", {
 	end,
 	filetypes = { "typescript", "html", "htmlangular" },
 	root_markers = { "angular.json", "nx.json", "project.json" },
+	workspace_required = true,
 })
 
 local function rust_analyzer_cmd()

@@ -8,24 +8,6 @@ require("luasnip.loaders.from_lua").lazy_load({
 	paths = vim.fn.stdpath("config") .. "/lua/snippets",
 })
 
-local function accept_ai()
-	if not vim.api.nvim_get_mode().mode:match("^i") then
-		return nil
-	end
-
-	local ok, virtual_text = pcall(require, "codeium.virtual_text")
-	if not ok or not virtual_text.get_current_completion_item() then
-		return nil
-	end
-
-	local keys = virtual_text.accept()
-	if not keys or keys == "" then
-		return nil
-	end
-
-	return keys
-end
-
 local insert_mapping = {
 	["<C-Space>"] = CMP.mapping.complete(),
 	-- Algunas terminales envían Ctrl-Space como Ctrl-@ (NUL).
@@ -69,18 +51,13 @@ vim.keymap.set({ "i", "s" }, "<Tab>", function()
 		return ""
 	end
 
-	local ai_keys = accept_ai()
-	if ai_keys then
-		return ai_keys
-	end
-
 	if luasnip.expand_or_locally_jumpable() then
 		vim.schedule(luasnip.expand_or_jump)
 		return ""
 	end
 
 	return "<Tab>"
-end, { expr = true, silent = true, desc = "Aceptar IA o avanzar snippet" })
+end, { expr = true, silent = true, desc = "Siguiente item o avanzar snippet" })
 
 vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
 	if CMP.visible() then
@@ -165,14 +142,3 @@ local search = {
 	},
 }
 CMP.setup.cmdline({ "/", "?" }, search)
-
-vim.api.nvim_create_autocmd("User", {
-	pattern = "CmpMenuOpened",
-	callback = function()
-		local ok, virtual_text = pcall(require, "codeium.virtual_text")
-		if ok then
-			virtual_text.clear()
-		end
-	end,
-	desc = "Ocultar Windsurf mientras CMP está abierto",
-})

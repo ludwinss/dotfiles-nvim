@@ -58,12 +58,7 @@ function M.native()
 	end, default_opts)
 	keymap(n, "<leader>f", function()
 		require("native.lsp-native").toggle_format_enabled()
-		default_opts = vim.tbl_extend("force", default_opts, { desc = "Act/Desc formateo" })
-	end, default_opts)
-
-	keymap(n, "<leader>c", function()
-		require("native.lsp-native").toggle_windsurf()
-	end, vim.tbl_extend("force", default_opts, { desc = "Act/Desc Windsurf" }))
+	end, vim.tbl_extend("force", default_opts, { desc = "Act/Desc formateo" }))
 
 	keymap(
 		n,
@@ -332,7 +327,7 @@ function M.conformkeymap()
 		n,
 		"<leader>gf",
 		function()
-			require("native.lsp-native").format_buffer({ force = true })
+			require("native.lsp-native").format_buffer()
 		end,
 		vim.tbl_extend("force", default_opts, {
 			desc = "Formatear archivo",

@@ -1,5 +1,5 @@
 require("conform").setup({
-	notify_on_error = false,
+	notify_on_error = true,
 
 	format_on_save = function(bufnr)
 		if vim.g.disable_autoformat then
@@ -10,7 +10,7 @@ require("conform").setup({
 		if ft == "dotenv" or ft == "conf" then
 			return
 		end
-		return { timeout_ms = 800, lsp_fallback = false, quiet = true }
+		return { timeout_ms = 1000, lsp_format = "never", quiet = true }
 	end,
 
 	default_format_opts = { lsp_format = "never" },
@@ -19,16 +19,16 @@ require("conform").setup({
 		lua = { "stylua" },
 		rust = { "rustfmt" },
 
-		javascript = { "prettierd", "eslint_d", stop_after_first = true },
-		typescript = { "prettierd", "eslint_d", stop_after_first = true },
-		javascriptreact = { "prettierd", "eslint_d", stop_after_first = true },
-		typescriptreact = { "prettierd", "eslint_d", stop_after_first = true },
+		javascript = { "prettierd", "prettier", "eslint_d", stop_after_first = true },
+		typescript = { "prettierd", "prettier", "eslint_d", stop_after_first = true },
+		javascriptreact = { "prettierd", "prettier", "eslint_d", stop_after_first = true },
+		typescriptreact = { "prettierd", "prettier", "eslint_d", stop_after_first = true },
 		vue = { "prettierd", "prettier", stop_after_first = true },
 
 		python = { "ruff_format" },
 
-		json = { "prettierd", "fixjson", stop_after_first = true },
-		markdown = { "prettierd" },
+		json = { "prettierd", "prettier", "fixjson", stop_after_first = true },
+		markdown = { "prettierd", "prettier", stop_after_first = true },
 		html = { "prettierd", "prettier", stop_after_first = true },
 		htmlangular = { "prettierd", "prettier", stop_after_first = true },
 		scss = { "prettierd", "prettier", stop_after_first = true },
