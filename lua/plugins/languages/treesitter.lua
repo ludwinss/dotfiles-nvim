@@ -1,70 +1,88 @@
-require("nvim-treesitter.configs").setup({
-	ensure_installed = {
-		"bash",
-		"css",
-		"dockerfile",
-		"elixir",
-		"go",
-		"angular",
-		"html",
-		"javascript",
-		"json",
-		"lua",
-		"python",
-		"rust",
-		"scss",
-		"typescript",
-		"yaml",
-		"c",
-		"cpp",
-		"vim",
-		"regex",
-		"markdown",
-		"markdown_inline",
-		"kdl",
-		"make",
-	},
+local parsers = {
+	"angular",
+	"bash",
+	"c",
+	"cpp",
+	"css",
+	"dockerfile",
+	"elixir",
+	"go",
+	"html",
+	"javascript",
+	"json",
+	"kdl",
+	"lua",
+	"make",
+	"markdown",
+	"markdown_inline",
+	"python",
+	"regex",
+	"rust",
+	"scss",
+	"tsx",
+	"typescript",
+	"vim",
+	"xml",
+	"yaml",
+}
 
-	ignore_install = { "latex" },
+local treesitter = require("nvim-treesitter")
 
-	sync_install = false,
-	auto_install = true,
+-- Se declara explícitamente para que estos parsers tengan prioridad sobre
+-- restos de instalaciones antiguas dentro del directorio del plugin.
+treesitter.setup({
+	install_dir = vim.fn.stdpath("data") .. "/site",
+})
+treesitter.install(parsers)
 
-	highlight = {
-		enable = true,
-		disable = { "latex", "tex" },
-		additional_vim_regex_highlighting = false,
-	},
+-- El filetype personalizado usa el parser de Angular.
+vim.treesitter.language.register("angular", "htmlangular")
 
-	indent = { enable = true },
-
-	textobjects = {
-		select = { enable = true },
-		move = {
-			enable = true,
-			goto_next_start = {
-				["]f"] = "@function.outer",
-				["]c"] = "@class.outer",
-			},
-			goto_previous_start = {
-				["[f"] = "@function.outer",
-				["[c"] = "@class.outer",
-			},
-			goto_next_end = {
-				["]F"] = "@function.outer",
-				["]C"] = "@class.outer",
-			},
-			goto_previous_end = {
-				["[F"] = "@function.outer",
-				["[C"] = "@class.outer",
-			},
-		},
-	},
-
-	playground = {
-		enable = true,
-		disable = {},
-		updatetime = 25,
-		persist_queries = false,
+-- nvim-treesitter no ofrece un parser MDX dedicado; Markdown proporciona
+-- resaltado estable para el contenido documental de Storybook.
+vim.filetype.add({
+	extension = {
+		mdx = "markdown",
 	},
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("TreesitterStart", { clear = true }),
+	callback = function(args)
+		if args.match == "latex" or args.match == "tex" then
+			return
+		end
+
+		local ok = pcall(vim.treesitter.start, args.buf)
+		if ok then
+			vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+		end
+	end,
+})
+
+require("nvim-treesitter-textobjects").setup({
+	select = {
+		lookahead = true,
+	},
+	move = {
+		set_jumps = true,
+	},
+})
+
+local move = require("nvim-treesitter-textobjects.move")
+local move_mappings = {
+	["]f"] = { move.goto_next_start, "@function.outer", "Ir a la siguiente función" },
+	["]c"] = { move.goto_next_start, "@class.outer", "Ir a la siguiente clase" },
+	["[f"] = { move.goto_previous_start, "@function.outer", "Ir a la función anterior" },
+	["[c"] = { move.goto_previous_start, "@class.outer", "Ir a la clase anterior" },
+	["]F"] = { move.goto_next_end, "@function.outer", "Ir al final de la siguiente función" },
+	["]C"] = { move.goto_next_end, "@class.outer", "Ir al final de la siguiente clase" },
+	["[F"] = { move.goto_previous_end, "@function.outer", "Ir al final de la función anterior" },
+	["[C"] = { move.goto_previous_end, "@class.outer", "Ir al final de la clase anterior" },
+}
+
+for lhs, mapping in pairs(move_mappings) do
+	vim.keymap.set({ "n", "x", "o" }, lhs, function()
+		mapping[1](mapping[2], "textobjects")
+	end, { desc = mapping[3] })
+end

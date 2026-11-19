@@ -202,12 +202,12 @@ function M.toggle_oil()
 end
 
 function M.select_current_function()
-	local ok, ts_select = pcall(require, "nvim-treesitter.textobjects.select")
+	local ok, ts_select = pcall(require, "nvim-treesitter-textobjects.select")
 	if not ok then
 		vim.notify("nvim-treesitter-textobjects no está disponible", vim.log.levels.WARN)
 		return
 	end
-	ts_select.select_textobject("@function.outer")
+	ts_select.select_textobject("@function.outer", "textobjects")
 end
 
 function M.close_all_oil_windows()
@@ -291,16 +291,16 @@ function M.toggle_neogit()
 end
 
 function M.goto_function(direction)
-	local ok, move = pcall(require, "nvim-treesitter.textobjects.move")
+	local ok, move = pcall(require, "nvim-treesitter-textobjects.move")
 	if not ok then
 		vim.notify("nvim-treesitter-textobjects no está disponible", vim.log.levels.WARN)
 		return
 	end
 
 	if direction == "next" then
-		move.goto_next_start("@function.outer")
+		move.goto_next_start("@function.outer", "textobjects")
 	elseif direction == "prev" then
-		move.goto_previous_start("@function.outer")
+		move.goto_previous_start("@function.outer", "textobjects")
 	end
 end
 

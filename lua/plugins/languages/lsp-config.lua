@@ -105,6 +105,19 @@ vim.lsp.config("ts_ls", {
 	},
 })
 
+vim.lsp.config("tailwindcss", {
+	cmd = { vim.fs.joinpath(mason_bin, "tailwindcss-language-server"), "--stdio" },
+	settings = {
+		tailwindCSS = {
+			classAttributes = { "class", "className", "class:list", "classList", "ngClass" },
+			classFunctions = { "clsx", "cn", "cva", "tw", "twMerge" },
+			includeLanguages = {
+				htmlangular = "html",
+			},
+		},
+	},
+})
+
 local ngserver_bin = vim.fs.joinpath(mason_bin, "ngserver")
 
 local function angular_probe_locations(root_dir)

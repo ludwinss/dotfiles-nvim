@@ -30,6 +30,7 @@ M.servers = vim.tbl_map(normalize, {
 	"marksman",
 	"ltex",
 	"sqls",
+	"tailwindcss",
 })
 
 function M.setup()

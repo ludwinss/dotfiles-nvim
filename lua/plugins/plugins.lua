@@ -79,12 +79,15 @@ return {
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",
+		branch = "main",
 		dependencies = {
-			"nvim-treesitter/nvim-treesitter-textobjects",
-			"nvim-treesitter/playground",
+			{
+				"nvim-treesitter/nvim-treesitter-textobjects",
+				branch = "main",
+			},
 		},
-		event = "VeryLazy",
-		build = { ":TSUpdate" },
+		lazy = false,
+		build = ":TSUpdate",
 		config = function()
 			require("plugins.languages.treesitter")
 		end,
@@ -282,7 +285,20 @@ return {
 		"aserowy/tmux.nvim",
 		event = "VeryLazy",
 		config = function()
-			require("tmux").setup()
+			require("tmux").setup({
+				copy_sync = {
+					enable = true,
+					-- El proveedor de clipboard usa stdin y soporta yanks grandes.
+					-- La sincronización de registros usa `printf` y supera ARG_MAX
+					-- al copiar archivos extensos, como los JSON de traducciones.
+					sync_clipboard = true,
+					sync_registers = false,
+					sync_registers_keymap_put = false,
+					sync_registers_keymap_reg = false,
+					sync_deletes = false,
+					sync_unnamed = false,
+				},
+			})
 		end,
 	},
 	{
